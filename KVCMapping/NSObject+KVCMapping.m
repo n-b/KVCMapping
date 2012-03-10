@@ -11,35 +11,44 @@
 
 @implementation NSObject (NSObject_KVCMapping)
 
-- (void) setTransformedValue:(id)value forRealKey:(NSString*)realKey
+- (void) setValuesForKeysWithDictionary:(NSDictionary *)keyedValues withMappingDictionary:(NSDictionary*)kvcMappingDictionnary
 {
-    [self setValue:value forKey:realKey];
+    for (NSString * wantedKey in [keyedValues allKeys]) 
+        [self setValue:[keyedValues objectForKey:wantedKey] forKey:wantedKey withMappingDictionary:kvcMappingDictionnary];
 }
 
 - (void) setValue:(id)value forKey:(NSString*)wantedKey withMappingDictionary:(NSDictionary*)kvcMappingDictionnary
 {
+    // Find the actual key to use in the mapping dictionary.
     NSString * realKey = [kvcMappingDictionnary objectForKey:wantedKey];
-    // find a value transformer
+    
+    // Check wether we should use a ValueTransformer
+    //
+    // The exact format for the mapped key is :
+    //	[<ValueTransformerName>":"]<MappedKey>
     NSArray * realComponents = [realKey componentsSeparatedByString:@":"];
     if(realComponents.count==2)
     {
         realKey = [realComponents objectAtIndex:1];
         NSValueTransformer * transformer = [NSValueTransformer valueTransformerForName:[realComponents objectAtIndex:0]];
+        // Transform the value.
         value = [transformer transformedValue:value];
     }
     
+    // Only set the value if we found a valid realKey. Otherwise, do nothing.
+    // (We could have decided to use the wantedKey instead. See "Security Considerations" in the README.)
     if([realKey length])
         [self setTransformedValue:value forRealKey:realKey];
-#if DEBUG
+#if DEBUG_KVC_MAPPING
     else
         NSLog(@"ignored key : %@ for class %@",wantedKey, [self class]);
 #endif
 }
 
-- (void) setValuesForKeysWithDictionary:(NSDictionary *)keyedValues withMappingDictionary:(NSDictionary*)kvcMappingDictionnary
+- (void) setTransformedValue:(id)value forRealKey:(NSString*)realKey
 {
-    for (NSString * wantedKey in [keyedValues allKeys]) 
-        [self setValue:[keyedValues objectForKey:wantedKey] forKey:wantedKey withMappingDictionary:kvcMappingDictionnary];
+    // This method is only useful as a hook for NSManagedObject's reimplementation
+    [self setValue:value forKey:realKey];
 }
 
 @end
@@ -51,21 +60,28 @@
 
 - (void) setTransformedValue:(id)value forRealKey:(NSString*)realKey
 {
+    // `realKey` is already converted to a valid KVC key by - setValue:forKey:withMappingDictionary.
+    
+    // Find whether we're setting a CoreData attribute or a regular 
     NSAttributeDescription * attributeDesc = [[[self entity] attributesByName] objectForKey:realKey];
     if(attributeDesc==nil)
     {
+        // We have no attribute description, use regular KVC.
         [super setTransformedValue:value forRealKey:realKey];
         return;
     }
     
+    // Check wether we need to convert the value.
     NSAttributeType attributeType = attributeDesc.attributeType;
     Class expectedClass = NSClassFromString(attributeDesc.attributeValueClassName);
     if([value isKindOfClass:expectedClass])
     {
+        // Value is as expected : just use it as it is.
         [self setValue:value forKey:realKey];
         return;
     }
 
+    // Convert !
     id coercedValue = nil;
     switch (attributeType) 
     {
@@ -122,7 +138,7 @@
             coercedValue = value;
             break;
     }
-#if DEBUG && DEBUG_KV_MAPPING
+#if DEBUG_KVC_MAPPING
     if(correctValue)
         NSLog(@"fixed %@(%@) to %@(%@) for key %@ of class %@",
               value, [value class], correctValue, [correctValue class], realKey, [self class]);

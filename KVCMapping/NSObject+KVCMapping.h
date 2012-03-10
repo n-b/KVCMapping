@@ -42,9 +42,17 @@
  pass it through the the NSValueTransformer registered for the name "ISOFormattedStringToDateValueTransformer",
  and assign it to the object for the key "updateDate".
 
- For NSManagedObjects, setValue:forKey:withMappingDictionary also does automatic type coercion from string to numbers.
+ Automatic Type Coercion
+ -----------------------
+ 
+ For NSManagedObjects, - setValue:forKey:withMappingDictionary also does automatic type coercion from string to numbers and vice-versa.
+ 
  */
 - (void) setValue:(id)value forKey:(NSString*)wantedKey withMappingDictionary:(NSDictionary*)kvcMappingDictionnary;
+
+/*
+ Calls - setValue:forKey:withMappingDictionary: repeatedly with the key-value pairs in `keyedValues`.
+ */
 - (void) setValuesForKeysWithDictionary:(NSDictionary *)keyedValues withMappingDictionary:(NSDictionary*)kvcMappingDictionnary;
 @end
 
