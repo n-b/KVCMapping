@@ -1,0 +1,90 @@
+KVC Mapping
+-----------
+
+**KVC Mapping** is the automatic translation of keys to your objects, typically when importing data into your model.
+
+Let's say you have a datamodel, representing people, with a name, surname, and birthdate. The corresponding Objective-C class would look like :
+
+    @interface Person : NSObject
+	    @property NSString * name;
+	    @property NSString * surname;
+	    @property NSString * birthdate;
+    @end
+
+You also happen to have a source for your data, for example a webservice providing JSON data. Unfortunately, the JSON data looks like :
+
+    [ 
+        {
+            name1:"John",
+            name2:"Doe",
+            birth:"2001/01/01"
+        },
+        {
+            name1:"Ann",
+            name2:"Onymous",
+            birth:"1981/10/23"
+        }
+    ]
+
+Unfortunately, the JSON uses different keys for the "name", "surname", and "birthdate".
+Now you could go through your JSON array, and for every object compare the key string and assign it to the right property, but that looks a bit tedious.
+
+**The point of KVCMapping is to declare a mapping between the keys used in your models, and the keys used in the data you're importing.**
+
+In the above example, a simple dictionary :
+
+    {
+        name1 = name;
+        name2 = surname;
+    }
+
+would be enough to parse the name and surname. You would then write :
+
+	NSDictionary * mapping = [NSDictionary dictionaryWithObjectsAndKeys:
+               @"name", @"name1",
+               @"surname", @"name2",
+			   nil];
+	
+	for( NSDictionary * personAsDictionary in arrayFromJSON)
+	{
+		Person * person = ...; // create the data object, for example in CoreData
+	    [person setValuesForKeysWithDictionary:personAsDictionary withMappingDictionary:mapping];
+	}
+
+Voilà !
+
+Value Transformers
+------------------
+
+But what about birthdate? NSDate are a little tougher to parse, because there's typically no "date" object in raw data. Dates are typically saved as strings, using a [more-or-less standard encoding](http://fr.wikipedia.org/wiki/ISO_8601). Unfortunately, there's no safe way to determine the exact encoding based only on the data. We have to give a hint to the parser.
+
+In Objective-C, dates are converted to and from strings using NSDateFormatter. Another useful class here is NSValueTransformer, which is used to convert abritrary data from one representation to another. **In KVCMapping, value transformers can be specified by name, right in the mapping dictionary.**
+
+Let's do this for the above example :
+
+    // Setup a date formatter for our external date representation
+    NSDateFormatter * dateFormatter = [NSDateFormatter new];
+	dateFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+    dateFormatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+	[dateFormatter setDateFormat:@"yyyy/MM/dd"];
+
+	// Create a value transformer with the date formatter
+    NSValueTransformer * valueTransformer = [[FormattedStringToDateValueTransformer alloc] initWithDateFormatter:dateFormatter];
+	// And register it by name.
+    [NSValueTransformer setValueTransformer:valueTransformer forName:@"ISO8601StringToDate"];
+	
+The full mapping dictionary is :
+
+	NSDictionary * mapping = [NSDictionary dictionaryWithObjectsAndKeys:
+               @"name", @"name1",
+               @"surname", @"name2",
+			   @"ISO8601StringToDate:birthdate", @"birth",
+			   nil];
+
+The exact format for the mapped key is
+
+	[<ValueTransformerName>":"]<MappedKey>
+
+Type Coercion
+-------------
+

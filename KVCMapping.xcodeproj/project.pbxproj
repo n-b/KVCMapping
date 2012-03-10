@@ -51,6 +51,7 @@
 		37EADF80150B8E42001D3588 /* FormattedStringToDateValueTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormattedStringToDateValueTransformer.h; sourceTree = "<group>"; };
 		37EADF81150B8E42001D3588 /* FormattedStringToDateValueTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FormattedStringToDateValueTransformer.m; sourceTree = "<group>"; };
 		37EADF85150B8EAA001D3588 /* NSObject+KVCMappingTests.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "NSObject+KVCMappingTests.xcdatamodel"; sourceTree = "<group>"; };
+		37EADF87150B91A0001D3588 /* README.mdown */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.mdown; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +82,7 @@
 		37A80DE3150B8CE800B9B6E1 = {
 			isa = PBXGroup;
 			children = (
+				37EADF87150B91A0001D3588 /* README.mdown */,
 				37A80DF3150B8CE800B9B6E1 /* KVCMapping */,
 				37A80E07150B8CE800B9B6E1 /* KVCMappingTests */,
 				37A80DF0150B8CE800B9B6E1 /* Frameworks */,
