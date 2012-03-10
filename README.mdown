@@ -9,6 +9,7 @@ Let's say you have a datamodel, representing people, with a name, surname, and b
 	    @property NSString * name;
 	    @property NSString * surname;
 	    @property NSString * birthdate;
+        @property BOOL likesCoffee;
     @end
 
 You also happen to have a source for your data, for example a webservice providing JSON data. Unfortunately, the JSON data looks like :
@@ -18,11 +19,13 @@ You also happen to have a source for your data, for example a webservice providi
             name1:"John",
             name2:"Doe",
             birth:"2001/01/01"
+            caffeine:1
         },
         {
             name1:"Ann",
             name2:"Onymous",
             birth:"1981/10/23"
+            caffeine:1
         }
     ]
 
@@ -36,6 +39,7 @@ In the above example, a simple dictionary :
     {
         name1 = name;
         name2 = surname;
+        caffeine = likesCoffee;
     }
 
 would be enough to parse the name and surname. You would then write :
@@ -43,6 +47,7 @@ would be enough to parse the name and surname. You would then write :
 	NSDictionary * mapping = [NSDictionary dictionaryWithObjectsAndKeys:
                @"name", @"name1",
                @"surname", @"name2",
+               @"likesCoffee", @"caffeine",
 			   nil];
 	
 	for( NSDictionary * personAsDictionary in arrayFromJSON)
@@ -64,9 +69,7 @@ Let's do this for the above example :
 
     // Setup a date formatter for our external date representation
     NSDateFormatter * dateFormatter = [NSDateFormatter new];
-	dateFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
-    dateFormatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
-	[dateFormatter setDateFormat:@"yyyy/MM/dd"];
+	[dateFormatter setDateFormat:@"yyyy/MM/dd"]; // In the real world, you probably have to set the locale and timezone for your formatter.
 
 	// Create a value transformer with the date formatter
     NSValueTransformer * valueTransformer = [[FormattedStringToDateValueTransformer alloc] initWithDateFormatter:dateFormatter];
@@ -78,13 +81,35 @@ The full mapping dictionary is :
 	NSDictionary * mapping = [NSDictionary dictionaryWithObjectsAndKeys:
                @"name", @"name1",
                @"surname", @"name2",
+               @"likesCoffee", @"caffeine",
 			   @"ISO8601StringToDate:birthdate", @"birth",
 			   nil];
 
-The exact format for the mapped key is
+The exact format for the mapped key is :
 
 	[<ValueTransformerName>":"]<MappedKey>
+
 
 Type Coercion
 -------------
 
+Key-Value Coding supports, to some degree, automatic conversion [between objects and scalars](https://developer.apple.com/library/ios/documentation/cocoa/conceptual/KeyValueCoding/Articles/DataTypes.html), but there's nothing in the Objective-C runtime to prevent you from assigning an NSNumber to an NSString property, or any other object.
+
+In CoreData, NSManagedObject know a lot more about there own properties, using NSAttributeDescription. 
+
+**When used with NSManagedObjects, KVCMapping automatically converts objects to the wanted type** :
+
+* NSNumbers are converted to NSString using `- stringValue`;
+* NSStrings are converted to NSNumbers using `- boolValue`, `- intValue`, `- longlongValue`, `- floatValue`, `- doubleValue`, or to NSDecimalNumbers depending of expected attribute type.
+
+
+Security Considerations
+-----------------------
+
+Automatic import is cool, but any input data must be checked. This makes parsing easier, and more robust.
+
+KVCMapping only uses the keys you pass in the mapping dictionary. If a key of the external data is not found in the mapping dictionary, it is simply ignored.
+
+Automatic Type Coercion also makes sure that strings and numbers are converted correctly.
+
+Finally, Value Transformers should check their input data before converting it to the desired type.
