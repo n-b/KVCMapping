@@ -1,6 +1,6 @@
 //
 //  NSObject+KVCMapping_Tests.m
-//  Bicyclette
+//  KVCMapping
 //
 //  Created by Nicolas Bouilleaud on 27/11/11.
 //  Copyright (c) 2011 Nicolas Bouilleaud. All rights reserved.
@@ -124,7 +124,7 @@
 {
     NSManagedObject * test = [NSEntityDescription insertNewObjectForEntityForName:@"TestEntity" inManagedObjectContext:moc];
     [test setValue:@"testValue" forKey:@"usedString" withMappingDictionary:mapping];
-    //    STAssertThrows([test valueForKey:@"usedName"], nil);  // Tests passes, but crashes in iOS Xcode 4.3b3
+    STAssertThrows([test valueForKey:@"usedName"], nil);
     STAssertEqualObjects([test valueForKey:@"actualString"], @"testValue", nil);
 }
 

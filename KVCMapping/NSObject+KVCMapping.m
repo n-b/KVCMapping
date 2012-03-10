@@ -1,6 +1,6 @@
 //
 //  NSObject+KVCMapping.m
-//  Bicyclette
+//  KVCMapping
 //
 //  Created by Nicolas Bouilleaud on 18/06/11.
 //  Copyright 2011 Nicolas Bouilleaud. All rights reserved.

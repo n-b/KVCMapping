@@ -1,6 +1,6 @@
 //
 //  FormattedStringToDateValueTransformer.h
-//  Bicyclette
+//  KVCMapping
 //
 //  Created by Nicolas Bouilleaud on 29/11/11.
 //  Copyright (c) 2011 Nicolas Bouilleaud. All rights reserved.
