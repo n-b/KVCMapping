@@ -74,7 +74,7 @@
     // Check wether we need to convert the value.
     NSAttributeType attributeType = attributeDesc.attributeType;
     Class expectedClass = NSClassFromString(attributeDesc.attributeValueClassName);
-    if([value isKindOfClass:expectedClass])
+    if([value isKindOfClass:expectedClass] || value==nil)
     {
         // Value is as expected : just use it as it is.
         [self setValue:value forKey:realKey];
