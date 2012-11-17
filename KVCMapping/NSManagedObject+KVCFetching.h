@@ -18,7 +18,8 @@
 // Finds the entity in the passed context's model whose object class is the receiver, or a superclass of the receiver.
 // Obviously, it's to be called in subclasses. The implementation does not return entities whose object class is NSManagedObject.
 //
-// Additionally, this method is overridden in mogenerator's boilerplate code. This implementation is only used for unit tests.
+// For the record, [mogenerator](https://github.com/rentzsch/mogenerator)
+// generates the same method for each generated entity. The entity-specific implementation would be used instead of this generic version.
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)context;
 
 // Fetch an existing object of the receiver entity whose value for `key` is equal to the passed `value`

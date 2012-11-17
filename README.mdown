@@ -1,7 +1,18 @@
+**KVC Mapping** is the automatic translation of external data to your internal model objects. It's useful when importing data, say JSON from a webservice, into your CoreData backend.
+
+**KVC Mapping** features
+ * mapping the keys of the external representation to the property names of your model,
+  * including mapping of the same key to several properties in the same entity.
+ * mapping the keys in the external representation to relationships between your model's entities,
+ * automatic conversion of the data for trivial cases (nonlocalized strings to numbers and vice-versa),
+ * easy conversion mechanism for complex cases, using NSValueTransformers.
+
+**KVC Mapping** does not (yet) support :
+ * mapping subdictionaries in the imported data,
+ * mapping several keys of the imported data to a single property of the model.
+
 KVC Mapping
 -----------
-
-**KVC Mapping** is the automatic translation of keys to your objects, typically when importing data into your model.
 
 Let's say you have a datamodel, representing people, with a name, surname, and birthdate. The corresponding Objective-C class would look like :
 
@@ -58,6 +69,9 @@ would be enough to parse the name and surname. You would then write :
 
 Voilà !
 
+KVC Relatonships
+----------------
+
 Value Transformers
 ------------------
 
@@ -67,14 +81,18 @@ In Objective-C, dates are converted to and from strings using NSDateFormatter. A
 
 Let's do this for the above example :
 
-    // Setup a date formatter for our external date representation
-    NSDateFormatter * dateFormatter = [NSDateFormatter new];
-	[dateFormatter setDateFormat:@"yyyy/MM/dd"]; // In the real world, you probably have to set the locale and timezone for your formatter.
-
 	// Create a value transformer with the date formatter
-    NSValueTransformer * valueTransformer = [[FormattedStringToDateValueTransformer alloc] initWithDateFormatter:dateFormatter];
-	// And register it by name.
-    [NSValueTransformer setValueTransformer:valueTransformer forName:@"ISO8601StringToDate"];
+    // I'm using [Mattt's excellent TransformerKit](https://github.com/mattt/TransformerKit) 
+    // for block-based value-transformers :
+    [NSValueTransformer registerValueTransformerWithName:@"ISO8601StringToDate"
+                                   transformedValueClass:[NSDate class] 
+                  returningTransformedValueWithBlock:^id(id value) {
+        // Setup a date formatter for our external date representation
+        // In the real world, you probably want to specify locale and cache the date formatter.
+ 	    NSDateFormatter * dateFormatter = [NSDateFormatter new];
+		[dateFormatter setDateFormat:@"yyyy/MM/dd"];
+		return [dateFormatter dateFromString:value]
+	}];
 	
 The full mapping dictionary is :
 

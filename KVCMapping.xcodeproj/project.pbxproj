@@ -389,7 +389,7 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KVCMapping/KVCMapping-Prefix.pch";
-				INFOPLIST_FILE = "KVCMappingTests/KVCMappingTests-Info.plist";
+				INFOPLIST_FILE = "Tests/KVCMappingTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
 			};
@@ -404,7 +404,7 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KVCMapping/KVCMapping-Prefix.pch";
-				INFOPLIST_FILE = "KVCMappingTests/KVCMappingTests-Info.plist";
+				INFOPLIST_FILE = "Tests/KVCMappingTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
 			};
