@@ -7,22 +7,30 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		373D65021657F1C80067FDC3 /* NSManagedObject+Coercion.h in Headers */ = {isa = PBXBuildFile; fileRef = 373D64FA1657F1C80067FDC3 /* NSManagedObject+Coercion.h */; };
+		373D65031657F1C80067FDC3 /* NSManagedObject+Coercion.m in Sources */ = {isa = PBXBuildFile; fileRef = 373D64FB1657F1C80067FDC3 /* NSManagedObject+Coercion.m */; };
+		373D65041657F1C80067FDC3 /* NSManagedObject+Coercion.m in Sources */ = {isa = PBXBuildFile; fileRef = 373D64FB1657F1C80067FDC3 /* NSManagedObject+Coercion.m */; };
+		373D65051657F1C80067FDC3 /* NSManagedObject+KVCFetching.h in Headers */ = {isa = PBXBuildFile; fileRef = 373D64FC1657F1C80067FDC3 /* NSManagedObject+KVCFetching.h */; };
+		373D65061657F1C80067FDC3 /* NSManagedObject+KVCFetching.m in Sources */ = {isa = PBXBuildFile; fileRef = 373D64FD1657F1C80067FDC3 /* NSManagedObject+KVCFetching.m */; };
+		373D65071657F1C80067FDC3 /* NSManagedObject+KVCFetching.m in Sources */ = {isa = PBXBuildFile; fileRef = 373D64FD1657F1C80067FDC3 /* NSManagedObject+KVCFetching.m */; };
+		373D65081657F1C80067FDC3 /* NSManagedObject+KVCRelationship.h in Headers */ = {isa = PBXBuildFile; fileRef = 373D64FE1657F1C80067FDC3 /* NSManagedObject+KVCRelationship.h */; };
+		373D65091657F1C80067FDC3 /* NSManagedObject+KVCRelationship.m in Sources */ = {isa = PBXBuildFile; fileRef = 373D64FF1657F1C80067FDC3 /* NSManagedObject+KVCRelationship.m */; };
+		373D650A1657F1C80067FDC3 /* NSManagedObject+KVCRelationship.m in Sources */ = {isa = PBXBuildFile; fileRef = 373D64FF1657F1C80067FDC3 /* NSManagedObject+KVCRelationship.m */; };
+		373D65101657F2030067FDC3 /* NSManagedObject_KVCMapping_Tests.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 373D650F1657F2030067FDC3 /* NSManagedObject_KVCMapping_Tests.xcdatamodel */; };
+		373D65161657F2100067FDC3 /* NSManagedObject+CoercionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 373D65111657F2100067FDC3 /* NSManagedObject+CoercionTests.m */; };
+		373D65171657F2100067FDC3 /* NSManagedObject+KVCFetchingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 373D65121657F2100067FDC3 /* NSManagedObject+KVCFetchingTests.m */; };
+		373D65181657F2100067FDC3 /* NSManagedObject+KVCMappingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 373D65131657F2100067FDC3 /* NSManagedObject+KVCMappingTests.m */; };
+		373D65191657F2100067FDC3 /* NSManagedObject+KVCRelationshipTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 373D65141657F2100067FDC3 /* NSManagedObject+KVCRelationshipTests.m */; };
 		37A80DF2150B8CE800B9B6E1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A80DF1150B8CE800B9B6E1 /* Foundation.framework */; };
 		37A80E00150B8CE800B9B6E1 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A80DFF150B8CE800B9B6E1 /* SenTestingKit.framework */; };
-		37A80E02150B8CE800B9B6E1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A80E01150B8CE800B9B6E1 /* UIKit.framework */; };
 		37A80E03150B8CE800B9B6E1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A80DF1150B8CE800B9B6E1 /* Foundation.framework */; };
 		37A80E06150B8CE800B9B6E1 /* libKVCMapping.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A80DEE150B8CE800B9B6E1 /* libKVCMapping.a */; };
-		37A80E0C150B8CE800B9B6E1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37A80E0A150B8CE800B9B6E1 /* InfoPlist.strings */; };
 		37EADF77150B8D3C001D3588 /* NSObject+KVCMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 37EADF75150B8D3C001D3588 /* NSObject+KVCMapping.h */; };
 		37EADF78150B8D3C001D3588 /* NSObject+KVCMapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EADF76150B8D3C001D3588 /* NSObject+KVCMapping.m */; };
 		37EADF79150B8D3C001D3588 /* NSObject+KVCMapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EADF76150B8D3C001D3588 /* NSObject+KVCMapping.m */; };
 		37EADF7C150B8DAB001D3588 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EADF7B150B8DAB001D3588 /* CoreData.framework */; };
 		37EADF7D150B8E04001D3588 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EADF7B150B8DAB001D3588 /* CoreData.framework */; };
 		37EADF7F150B8E29001D3588 /* NSObject+KVCMappingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EADF7E150B8E29001D3588 /* NSObject+KVCMappingTests.m */; };
-		37EADF82150B8E42001D3588 /* FormattedStringToDateValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 37EADF80150B8E42001D3588 /* FormattedStringToDateValueTransformer.h */; };
-		37EADF83150B8E42001D3588 /* FormattedStringToDateValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EADF81150B8E42001D3588 /* FormattedStringToDateValueTransformer.m */; };
-		37EADF84150B8E42001D3588 /* FormattedStringToDateValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EADF81150B8E42001D3588 /* FormattedStringToDateValueTransformer.m */; };
-		37EADF86150B8EAA001D3588 /* NSObject+KVCMappingTests.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 37EADF85150B8EAA001D3588 /* NSObject+KVCMappingTests.xcdatamodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,21 +44,27 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		373D64FA1657F1C80067FDC3 /* NSManagedObject+Coercion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObject+Coercion.h"; sourceTree = "<group>"; };
+		373D64FB1657F1C80067FDC3 /* NSManagedObject+Coercion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObject+Coercion.m"; sourceTree = "<group>"; };
+		373D64FC1657F1C80067FDC3 /* NSManagedObject+KVCFetching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObject+KVCFetching.h"; sourceTree = "<group>"; };
+		373D64FD1657F1C80067FDC3 /* NSManagedObject+KVCFetching.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObject+KVCFetching.m"; sourceTree = "<group>"; };
+		373D64FE1657F1C80067FDC3 /* NSManagedObject+KVCRelationship.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObject+KVCRelationship.h"; sourceTree = "<group>"; };
+		373D64FF1657F1C80067FDC3 /* NSManagedObject+KVCRelationship.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObject+KVCRelationship.m"; sourceTree = "<group>"; };
+		373D650F1657F2030067FDC3 /* NSManagedObject_KVCMapping_Tests.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = NSManagedObject_KVCMapping_Tests.xcdatamodel; sourceTree = "<group>"; };
+		373D65111657F2100067FDC3 /* NSManagedObject+CoercionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObject+CoercionTests.m"; sourceTree = "<group>"; };
+		373D65121657F2100067FDC3 /* NSManagedObject+KVCFetchingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObject+KVCFetchingTests.m"; sourceTree = "<group>"; };
+		373D65131657F2100067FDC3 /* NSManagedObject+KVCMappingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObject+KVCMappingTests.m"; sourceTree = "<group>"; };
+		373D65141657F2100067FDC3 /* NSManagedObject+KVCRelationshipTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObject+KVCRelationshipTests.m"; sourceTree = "<group>"; };
 		37A80DEE150B8CE800B9B6E1 /* libKVCMapping.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libKVCMapping.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		37A80DF1150B8CE800B9B6E1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		37A80DF5150B8CE800B9B6E1 /* KVCMapping-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KVCMapping-Prefix.pch"; sourceTree = "<group>"; };
 		37A80DFE150B8CE800B9B6E1 /* KVCMappingTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KVCMappingTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		37A80DFF150B8CE800B9B6E1 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		37A80E01150B8CE800B9B6E1 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		37A80E09150B8CE800B9B6E1 /* KVCMappingTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "KVCMappingTests-Info.plist"; sourceTree = "<group>"; };
-		37A80E0B150B8CE800B9B6E1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		37EADF75150B8D3C001D3588 /* NSObject+KVCMapping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+KVCMapping.h"; sourceTree = "<group>"; };
 		37EADF76150B8D3C001D3588 /* NSObject+KVCMapping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+KVCMapping.m"; sourceTree = "<group>"; };
 		37EADF7B150B8DAB001D3588 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		37EADF7E150B8E29001D3588 /* NSObject+KVCMappingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+KVCMappingTests.m"; sourceTree = "<group>"; };
-		37EADF80150B8E42001D3588 /* FormattedStringToDateValueTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormattedStringToDateValueTransformer.h; sourceTree = "<group>"; };
-		37EADF81150B8E42001D3588 /* FormattedStringToDateValueTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FormattedStringToDateValueTransformer.m; sourceTree = "<group>"; };
-		37EADF85150B8EAA001D3588 /* NSObject+KVCMappingTests.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "NSObject+KVCMappingTests.xcdatamodel"; sourceTree = "<group>"; };
 		37EADF87150B91A0001D3588 /* README.mdown */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.mdown; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -69,7 +83,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				37A80E00150B8CE800B9B6E1 /* SenTestingKit.framework in Frameworks */,
-				37A80E02150B8CE800B9B6E1 /* UIKit.framework in Frameworks */,
 				37A80E03150B8CE800B9B6E1 /* Foundation.framework in Frameworks */,
 				37A80E06150B8CE800B9B6E1 /* libKVCMapping.a in Frameworks */,
 				37EADF7D150B8E04001D3588 /* CoreData.framework in Frameworks */,
@@ -105,7 +118,6 @@
 				37A80DF1150B8CE800B9B6E1 /* Foundation.framework */,
 				37EADF7B150B8DAB001D3588 /* CoreData.framework */,
 				37A80DFF150B8CE800B9B6E1 /* SenTestingKit.framework */,
-				37A80E01150B8CE800B9B6E1 /* UIKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -115,8 +127,12 @@
 			children = (
 				37EADF75150B8D3C001D3588 /* NSObject+KVCMapping.h */,
 				37EADF76150B8D3C001D3588 /* NSObject+KVCMapping.m */,
-				37EADF80150B8E42001D3588 /* FormattedStringToDateValueTransformer.h */,
-				37EADF81150B8E42001D3588 /* FormattedStringToDateValueTransformer.m */,
+				373D64FA1657F1C80067FDC3 /* NSManagedObject+Coercion.h */,
+				373D64FB1657F1C80067FDC3 /* NSManagedObject+Coercion.m */,
+				373D64FC1657F1C80067FDC3 /* NSManagedObject+KVCFetching.h */,
+				373D64FD1657F1C80067FDC3 /* NSManagedObject+KVCFetching.m */,
+				373D64FE1657F1C80067FDC3 /* NSManagedObject+KVCRelationship.h */,
+				373D64FF1657F1C80067FDC3 /* NSManagedObject+KVCRelationship.m */,
 				37A80DF4150B8CE800B9B6E1 /* Supporting Files */,
 			);
 			path = KVCMapping;
@@ -134,17 +150,21 @@
 			isa = PBXGroup;
 			children = (
 				37EADF7E150B8E29001D3588 /* NSObject+KVCMappingTests.m */,
-				37EADF85150B8EAA001D3588 /* NSObject+KVCMappingTests.xcdatamodel */,
+				373D65111657F2100067FDC3 /* NSManagedObject+CoercionTests.m */,
+				373D65121657F2100067FDC3 /* NSManagedObject+KVCFetchingTests.m */,
+				373D65131657F2100067FDC3 /* NSManagedObject+KVCMappingTests.m */,
+				373D65141657F2100067FDC3 /* NSManagedObject+KVCRelationshipTests.m */,
+				373D650F1657F2030067FDC3 /* NSManagedObject_KVCMapping_Tests.xcdatamodel */,
 				37A80E08150B8CE800B9B6E1 /* Supporting Files */,
 			);
-			path = KVCMappingTests;
+			name = KVCMappingTests;
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		37A80E08150B8CE800B9B6E1 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
 				37A80E09150B8CE800B9B6E1 /* KVCMappingTests-Info.plist */,
-				37A80E0A150B8CE800B9B6E1 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -157,7 +177,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				37EADF77150B8D3C001D3588 /* NSObject+KVCMapping.h in Headers */,
-				37EADF82150B8E42001D3588 /* FormattedStringToDateValueTransformer.h in Headers */,
+				373D65021657F1C80067FDC3 /* NSManagedObject+Coercion.h in Headers */,
+				373D65051657F1C80067FDC3 /* NSManagedObject+KVCFetching.h in Headers */,
+				373D65081657F1C80067FDC3 /* NSManagedObject+KVCRelationship.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -231,7 +253,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37A80E0C150B8CE800B9B6E1 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,7 +280,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				37EADF78150B8D3C001D3588 /* NSObject+KVCMapping.m in Sources */,
-				37EADF83150B8E42001D3588 /* FormattedStringToDateValueTransformer.m in Sources */,
+				373D65031657F1C80067FDC3 /* NSManagedObject+Coercion.m in Sources */,
+				373D65061657F1C80067FDC3 /* NSManagedObject+KVCFetching.m in Sources */,
+				373D65091657F1C80067FDC3 /* NSManagedObject+KVCRelationship.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,8 +292,14 @@
 			files = (
 				37EADF79150B8D3C001D3588 /* NSObject+KVCMapping.m in Sources */,
 				37EADF7F150B8E29001D3588 /* NSObject+KVCMappingTests.m in Sources */,
-				37EADF84150B8E42001D3588 /* FormattedStringToDateValueTransformer.m in Sources */,
-				37EADF86150B8EAA001D3588 /* NSObject+KVCMappingTests.xcdatamodel in Sources */,
+				373D65041657F1C80067FDC3 /* NSManagedObject+Coercion.m in Sources */,
+				373D65071657F1C80067FDC3 /* NSManagedObject+KVCFetching.m in Sources */,
+				373D650A1657F1C80067FDC3 /* NSManagedObject+KVCRelationship.m in Sources */,
+				373D65101657F2030067FDC3 /* NSManagedObject_KVCMapping_Tests.xcdatamodel in Sources */,
+				373D65161657F2100067FDC3 /* NSManagedObject+CoercionTests.m in Sources */,
+				373D65171657F2100067FDC3 /* NSManagedObject+KVCFetchingTests.m in Sources */,
+				373D65181657F2100067FDC3 /* NSManagedObject+KVCMappingTests.m in Sources */,
+				373D65191657F2100067FDC3 /* NSManagedObject+KVCRelationshipTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -283,17 +312,6 @@
 			targetProxy = 37A80E04150B8CE800B9B6E1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		37A80E0A150B8CE800B9B6E1 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				37A80E0B150B8CE800B9B6E1 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		37A80E10150B8CE800B9B6E1 /* Debug */ = {

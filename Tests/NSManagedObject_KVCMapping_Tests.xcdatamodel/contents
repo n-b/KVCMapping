@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1810" systemVersion="12B19" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="TestEntity" syncable="YES">
+        <attribute name="actualBoolean" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="actualCompositeString1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="actualCompositeString2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="actualData" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="actualDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="actualDecimal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="actualDouble" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="actualFloat" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="actualInt16" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="actualInt32" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="actualInt64" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="actualString" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="TestEntityWithClass" representedClassName="TestEntityClass" syncable="YES">
+        <attribute name="testAttribute" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="TestRelatedEntityA" syncable="YES">
+        <attribute name="attributeInA" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="relationToB" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="TestRelatedEntityB" inverseName="relationToA" inverseEntity="TestRelatedEntityB" syncable="YES"/>
+    </entity>
+    <entity name="TestRelatedEntityB" syncable="YES">
+        <attribute name="attributeInB" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="relationToA" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="TestRelatedEntityA" inverseName="relationToB" inverseEntity="TestRelatedEntityA" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="TestEntity" positionX="160" positionY="192" width="128" height="225"/>
+        <element name="TestEntityWithClass" positionX="160" positionY="192" width="128" height="60"/>
+        <element name="TestRelatedEntityA" positionX="160" positionY="192" width="128" height="75"/>
+        <element name="TestRelatedEntityB" positionX="160" positionY="192" width="128" height="75"/>
+    </elements>
+</model>

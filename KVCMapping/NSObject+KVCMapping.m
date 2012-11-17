@@ -7,42 +7,72 @@
 //
 
 #import "NSObject+KVCMapping.h"
+#import "NSManagedObject+Coercion.h"
+
+/******************************************************************************/
+#pragma mark Helper Methods
+
+@implementation NSString (KVCMappingKeysHelperMethods)
+
+- (NSValueTransformer*) kvcExtractValueTransformer:(NSString**)realKey
+{
+    NSArray * realComponents = [self componentsSeparatedByString:@":"];
+    if(realComponents.count!=2)
+    {
+        if(realKey)
+            *realKey = self;
+        return nil;
+    }
+    
+    if(realKey)
+        *realKey = realComponents[1];
+    return [NSValueTransformer valueTransformerForName:realComponents[0]];
+}
+
+@end
+
+/******************************************************************************/
+#pragma mark NSObject
+
 #define DEBUG_KV_MAPPING 0
 
-@implementation NSObject (NSObject_KVCMapping)
+@implementation NSObject (KVCMapping)
 
 - (void) setValuesForKeysWithDictionary:(NSDictionary *)keyedValues withMappingDictionary:(NSDictionary*)kvcMappingDictionnary
 {
     for (NSString * wantedKey in [keyedValues allKeys]) 
-        [self setValue:[keyedValues objectForKey:wantedKey] forKey:wantedKey withMappingDictionary:kvcMappingDictionnary];
+        [self setValue:keyedValues[wantedKey] forKey:wantedKey withMappingDictionary:kvcMappingDictionnary];
 }
 
 - (void) setValue:(id)value forKey:(NSString*)wantedKey withMappingDictionary:(NSDictionary*)kvcMappingDictionnary
 {
-    // Find the actual key to use in the mapping dictionary.
-    NSString * realKey = [kvcMappingDictionnary objectForKey:wantedKey];
+    // Find the actual keys to use in the mapping dictionary.
+    id realKeys = kvcMappingDictionnary[wantedKey];
     
-    // Check wether we should use a ValueTransformer
-    //
-    // The exact format for the mapped key is :
-    //	[<ValueTransformerName>":"]<MappedKey>
-    NSArray * realComponents = [realKey componentsSeparatedByString:@":"];
-    if(realComponents.count==2)
+    // realKeys might be an NSArray of NSStrings, or a single NSString.
+    // Convert it to an NSArray.
+    if([realKeys isKindOfClass:[NSString class]])
+        realKeys = @[realKeys];
+    
+    for (__strong NSString * realKey in realKeys)
     {
-        realKey = [realComponents objectAtIndex:1];
-        NSValueTransformer * transformer = [NSValueTransformer valueTransformerForName:[realComponents objectAtIndex:0]];
-        // Transform the value.
-        value = [transformer transformedValue:value];
-    }
-    
-    // Only set the value if we found a valid realKey. Otherwise, do nothing.
-    // (We could have decided to use the wantedKey instead. See "Security Considerations" in the README.)
-    if([realKey length])
-        [self setTransformedValue:value forRealKey:realKey];
+        id realValue;
+
+        NSValueTransformer * transformer = [realKey kvcExtractValueTransformer:&realKey];
+        if(transformer)
+            realValue = [transformer transformedValue:value];
+        else
+            realValue = value;
+        
+        // Only set the value if we found a valid realKey. Otherwise, do nothing.
+        // (We could have decided to use the wantedKey instead. See "Security Considerations" in the README.)
+        if([realKey length])
+            [self setTransformedValue:realValue forRealKey:realKey];
 #if DEBUG_KVC_MAPPING
-    else
-        NSLog(@"ignored key : %@ for class %@",wantedKey, [self class]);
+        else
+            NSLog(@"ignored key : %@ for class %@. Mapping dictionary : %@",wantedKey, [self class], kvcMappingDictionnary);
 #endif
+    }
 }
 
 - (void) setTransformedValue:(id)value forRealKey:(NSString*)realKey
@@ -54,16 +84,16 @@
 @end
 
 /****************************************************************************/
-#pragma mark -
+#pragma mark NSManagedObject
 
-@implementation NSManagedObject (NSObject_KVCMapping)
+@implementation NSManagedObject (KVCMapping)
 
 - (void) setTransformedValue:(id)value forRealKey:(NSString*)realKey
 {
     // `realKey` is already converted to a valid KVC key by - setValue:forKey:withMappingDictionary.
     
     // Find whether we're setting a CoreData attribute or a regular 
-    NSAttributeDescription * attributeDesc = [[[self entity] attributesByName] objectForKey:realKey];
+    NSAttributeDescription * attributeDesc = [[self entity] attributesByName][realKey];
     if(attributeDesc==nil)
     {
         // We have no attribute description, use regular KVC.
@@ -81,67 +111,20 @@
         return;
     }
 
-    // Convert !
-    id coercedValue = nil;
-    switch (attributeType) 
+    // Check for NSNull : just set to nil
+    if(value==[NSNull null])
     {
-            // Numbers
-            /*
-             Notes :
-             * Core data has only signed integers,
-             * There's no "shortValue" in NSString,
-             * Using intValue always return a 32-bit integer (an int), while integerValue returns an NSInteger, which may be 64-bit.
-             */
-        case NSBooleanAttributeType :
-            if([value respondsToSelector:@selector(boolValue)])
-                coercedValue = [NSNumber numberWithBool:[value boolValue]];  
-            break;
-        case NSInteger16AttributeType :
-        case NSInteger32AttributeType :
-            if([value respondsToSelector:@selector(intValue)])
-                coercedValue = [NSNumber numberWithLong:[value intValue]];  
-            break;
-        case NSInteger64AttributeType :
-            if([value respondsToSelector:@selector(longLongValue)])
-                coercedValue = [NSNumber numberWithLongLong:[value longLongValue]];  
-            break;
-        case NSDecimalAttributeType :
-            if([value isKindOfClass:[NSString self]])
-                coercedValue = [NSDecimalNumber decimalNumberWithString:value];  
-            break;
-        case NSDoubleAttributeType :
-            if([value respondsToSelector:@selector(doubleValue)])
-                coercedValue = [NSNumber numberWithDouble:[value doubleValue]];  
-            break;
-        case NSFloatAttributeType :
-            if([value respondsToSelector:@selector(floatValue)])
-                coercedValue = [NSNumber numberWithFloat:[value floatValue]];  
-            break;
-            
-            // NSStrings
-        case NSStringAttributeType : 
-            if([value respondsToSelector:@selector(stringValue)])
-                coercedValue = [value stringValue];
-            break;
-            
-            // Date, Data, Transformable : 
-            // We can't coerce automatically. 
-        case NSDateAttributeType :
-        case NSBinaryDataAttributeType:
-            break;
-            
-            // Default behaviour for these (probably gonna crash later anyway)
-        case NSObjectIDAttributeType:
-        case NSTransformableAttributeType:
-            break;
-        default :
-            coercedValue = value;
-            break;
+        [self setValue:nil forKey:realKey];
+        return;
     }
+    
+    // Convert !
+    id coercedValue = [[self class] coerceValue:value toAttributeType:attributeType];
+    
 #if DEBUG_KVC_MAPPING
-    if(correctValue)
+    if(coercedValue)
         NSLog(@"fixed %@(%@) to %@(%@) for key %@ of class %@",
-              value, [value class], correctValue, [correctValue class], realKey, [self class]);
+              value, [value class], coercedValue, [coercedValue class], realKey, [self class]);
     else
         NSLog(@"invalid value : %@(%@), expected %@ for key %@ of class %@",
               value, [value class], expectedClass, realKey, [self class]);

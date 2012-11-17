@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSObject (NSObject_KVCMapping)
+@interface NSObject (KVCMapping)
 /* 
  KVC Mapping
  -----------
@@ -18,30 +18,42 @@
  The NSDictionary keys and values should only be NSStrings.
  
  An example of a simple mapping dictionary would be : 
- 	{
- 		"ID" = "identifier";
+ 	@{
+ 		@"ID": @"identifier"
  	}
  It can be used for assigning this data:
-    {
-    	"ID" = "1234";
+    @{
+    	@"ID": @"1234"
     }
  to an object such as : 
     @interface SomeObject
     @property id identifier;
     @end
  
-  
  Type Coercion and Value Transformers
  ------------------------------------
  
  More complex mapping can specify valuetransformers by name in the mapping dictionary, such as :
- 	{
- 		"updated_at" = "ISOFormattedStringToDateValueTransformer:updateDate";
+ 	@{
+ 		@"updated_at": @"ISOFormattedStringToDateValueTransformer:updateDate"
  	}
  This would use the value for the key "updated_at", 
  pass it through the the NSValueTransformer registered for the name "ISOFormattedStringToDateValueTransformer",
  and assign it to the object for the key "updateDate".
 
+ Using the same wantedKey for several real keys
+ ----------------------------------------------
+
+ The mapping dictionary can map the same external key to several internal model keys, by using an array of strings instead of a single string :
+  	@{
+ 		@"updated_at": @[ @"updateDate", @"creationDate" ]
+ 	}
+
+ Or even using different value transformers for each model key :
+  	@{
+ 		@"duration": @[ @"DurationToMinutesValueTransformer:durationMinutes", @"DurationToHoursValueTransformer:durationHours" ]
+ 	}
+ 
  Automatic Type Coercion
  -----------------------
  
@@ -55,4 +67,3 @@
  */
 - (void) setValuesForKeysWithDictionary:(NSDictionary *)keyedValues withMappingDictionary:(NSDictionary*)kvcMappingDictionnary;
 @end
-
