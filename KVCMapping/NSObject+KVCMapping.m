@@ -137,3 +137,25 @@
 }
 
 @end
+
+@implementation NSDictionary(KVCMappingHelper)
+- (NSString*) wantedKeyForRealKey:(NSString*)searchedRealKey
+{
+    for (NSString * wantedKey in self) {
+        id realKeys = self[wantedKey];
+        
+        // realKeys might be an NSArray of NSStrings, or a single NSString.
+        // Convert it to an NSArray.
+        if([realKeys isKindOfClass:[NSString class]])
+            realKeys = @[realKeys];
+        
+        for (__strong NSString * realKey in realKeys)
+        {
+            [realKey kvcExtractValueTransformer:&realKey];
+            if([realKey isEqualToString:searchedRealKey])
+                return wantedKey;
+        }
+    }
+    return nil;
+}
+@end

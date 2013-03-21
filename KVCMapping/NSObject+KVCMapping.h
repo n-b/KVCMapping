@@ -67,3 +67,12 @@
  */
 - (void) setValuesForKeysWithDictionary:(NSDictionary *)keyedValues withMappingDictionary:(NSDictionary*)kvcMappingDictionnary;
 @end
+
+
+/*
+ Helper NSDictionary Category
+ */
+@interface NSDictionary(KVCMappingHelper)
+// Reverse key search
+- (NSString*) wantedKeyForRealKey:(NSString*)realKey;
+@end
