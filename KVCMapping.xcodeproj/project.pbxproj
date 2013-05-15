@@ -41,6 +41,13 @@
 		8350CB291743BF4800A7E7B9 /* KVCEntitiesCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 8350CB251743BF4800A7E7B9 /* KVCEntitiesCache.m */; };
 		8350CB2A1743BF4800A7E7B9 /* KVCEntitiesCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 8350CB251743BF4800A7E7B9 /* KVCEntitiesCache.m */; };
 		8350CB2C1743BF6C00A7E7B9 /* KVCEntitiesCacheTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8350CB2B1743BF6C00A7E7B9 /* KVCEntitiesCacheTests.m */; };
+		8350CB301743C26E00A7E7B9 /* KVCEntityMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 8350CB2D1743C26E00A7E7B9 /* KVCEntityMapping.h */; };
+		8350CB311743C26E00A7E7B9 /* KVCEntityMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 8350CB2D1743C26E00A7E7B9 /* KVCEntityMapping.h */; };
+		8350CB321743C26E00A7E7B9 /* KVCEntityMapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 8350CB2E1743C26E00A7E7B9 /* KVCEntityMapping.m */; };
+		8350CB331743C26E00A7E7B9 /* KVCEntityMapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 8350CB2E1743C26E00A7E7B9 /* KVCEntityMapping.m */; };
+		8350CB341743C26E00A7E7B9 /* KVCEntityMapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 8350CB2E1743C26E00A7E7B9 /* KVCEntityMapping.m */; };
+		8350CB351743C26E00A7E7B9 /* KVCMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 8350CB2F1743C26E00A7E7B9 /* KVCMapping.h */; };
+		8350CB361743C26E00A7E7B9 /* KVCMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 8350CB2F1743C26E00A7E7B9 /* KVCMapping.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -74,6 +81,9 @@
 		8350CB241743BF4800A7E7B9 /* KVCEntitiesCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KVCEntitiesCache.h; sourceTree = "<group>"; };
 		8350CB251743BF4800A7E7B9 /* KVCEntitiesCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KVCEntitiesCache.m; sourceTree = "<group>"; };
 		8350CB2B1743BF6C00A7E7B9 /* KVCEntitiesCacheTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KVCEntitiesCacheTests.m; sourceTree = "<group>"; };
+		8350CB2D1743C26E00A7E7B9 /* KVCEntityMapping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KVCEntityMapping.h; sourceTree = "<group>"; };
+		8350CB2E1743C26E00A7E7B9 /* KVCEntityMapping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KVCEntityMapping.m; sourceTree = "<group>"; };
+		8350CB2F1743C26E00A7E7B9 /* KVCMapping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KVCMapping.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +163,9 @@
 		37A80DF3150B8CE800B9B6E1 /* KVCMapping */ = {
 			isa = PBXGroup;
 			children = (
+				8350CB2D1743C26E00A7E7B9 /* KVCEntityMapping.h */,
+				8350CB2E1743C26E00A7E7B9 /* KVCEntityMapping.m */,
+				8350CB2F1743C26E00A7E7B9 /* KVCMapping.h */,
 				37EADF75150B8D3C001D3588 /* NSObject+KVCMapping.h */,
 				37EADF76150B8D3C001D3588 /* NSObject+KVCMapping.m */,
 				373D64FA1657F1C80067FDC3 /* NSManagedObject+Coercion.h */,
@@ -208,6 +221,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				8350CB271743BF4800A7E7B9 /* KVCEntitiesCache.h in Headers */,
+				8350CB311743C26E00A7E7B9 /* KVCEntityMapping.h in Headers */,
+				8350CB361743C26E00A7E7B9 /* KVCMapping.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,6 +235,8 @@
 				373D65051657F1C80067FDC3 /* NSManagedObject+KVCFetching.h in Headers */,
 				373D65081657F1C80067FDC3 /* NSManagedObject+KVCRelationship.h in Headers */,
 				8350CB261743BF4800A7E7B9 /* KVCEntitiesCache.h in Headers */,
+				8350CB301743C26E00A7E7B9 /* KVCEntityMapping.h in Headers */,
+				8350CB351743C26E00A7E7B9 /* KVCMapping.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,6 +358,7 @@
 				37235E871662BCE100F33BF1 /* NSManagedObject+KVCFetching.m in Sources */,
 				37235E881662BCE100F33BF1 /* NSManagedObject+KVCRelationship.m in Sources */,
 				8350CB291743BF4800A7E7B9 /* KVCEntitiesCache.m in Sources */,
+				8350CB331743C26E00A7E7B9 /* KVCEntityMapping.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -353,6 +371,7 @@
 				373D65061657F1C80067FDC3 /* NSManagedObject+KVCFetching.m in Sources */,
 				373D65091657F1C80067FDC3 /* NSManagedObject+KVCRelationship.m in Sources */,
 				8350CB281743BF4800A7E7B9 /* KVCEntitiesCache.m in Sources */,
+				8350CB321743C26E00A7E7B9 /* KVCEntityMapping.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,6 +391,7 @@
 				373D65191657F2100067FDC3 /* NSManagedObject+KVCRelationshipTests.m in Sources */,
 				8350CB2A1743BF4800A7E7B9 /* KVCEntitiesCache.m in Sources */,
 				8350CB2C1743BF6C00A7E7B9 /* KVCEntitiesCacheTests.m in Sources */,
+				8350CB341743C26E00A7E7B9 /* KVCEntityMapping.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -24,46 +24,46 @@
     
     _moc = [NSManagedObjectContext new];
     _moc.persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:
-                                      [[NSManagedObjectModel alloc] initWithContentsOfURL:
-                                       [[NSBundle bundleForClass:[self class]] URLForResource:@"NSManagedObject_KVCMapping_Tests"
-                                                                                withExtension:@"mom"]]];
-
+                                       [[NSManagedObjectModel alloc] initWithContentsOfURL:
+                                        [[NSBundle bundleForClass:[self class]] URLForResource:@"NSManagedObject_KVCMapping_Tests"
+                                                                                 withExtension:@"mom"]]];
+    
     NSDate * date = [NSDate date];
     
-    _mapping = (@{@"usedBoolean": @"actualBoolean",
-               @"usedData": @"actualData",
-               @"usedDate": @"actualDate",
-               @"usedDecimal": @"actualDecimal",
-               @"usedDouble": @"actualDouble",
-               @"usedFloat": @"actualFloat",
-               @"usedInt16": @"actualInt16",
-               @"usedInt32": @"actualInt32",
-               @"usedInt64": @"actualInt64",
-               @"usedString": @"actualString",
-               });
+    _mapping = @{@"usedBoolean": @"actualBoolean",
+                @"usedData": @"actualData",
+                @"usedDate": @"actualDate",
+                @"usedDecimal": @"actualDecimal",
+                @"usedDouble": @"actualDouble",
+                @"usedFloat": @"actualFloat",
+                @"usedInt16": @"actualInt16",
+                @"usedInt32": @"actualInt32",
+                @"usedInt64": @"actualInt64",
+                @"usedString": @"actualString",
+                };
     
-    _goodDataset = (@{@"usedBoolean": @YES,
-                   @"usedInt16": [NSNumber numberWithShort:100],
-                   @"usedInt32": @100,
-                   @"usedInt64": @100LL,
-                   @"usedDecimal": [NSDecimalNumber numberWithInt:100],
-                   @"usedFloat": @100.0f,
-                   @"usedDouble": @100.0,
-                   @"usedString": @"100",
-                   @"usedData": [@"test" dataUsingEncoding:NSUTF8StringEncoding],
-                   @"usedDate": date
-                   });
+    _goodDataset = @{@"usedBoolean": @YES,
+                     @"usedInt16": [NSNumber numberWithShort:100],
+                     @"usedInt32": @100,
+                     @"usedInt64": @100LL,
+                     @"usedDecimal": [NSDecimalNumber numberWithInt:100],
+                     @"usedFloat": @100.0f,
+                     @"usedDouble": @100.0,
+                     @"usedString": @"100",
+                     @"usedData": [@"test" dataUsingEncoding:NSUTF8StringEncoding],
+                     @"usedDate": date
+                     };
     
-    _badDataSet = (@{@"usedBoolean": @"YES",
-                  @"usedInt16": @"100",
-                  @"usedInt32": @"100",
-                  @"usedInt64": @"100",
-                  @"usedDecimal": @"100",
-                  @"usedFloat": @"100",
-                  @"usedDouble": @"100",
-                  @"usedString": @100,
-                  @"usedData": [@"test" dataUsingEncoding:NSUTF8StringEncoding],
-                  @"usedDate": date});
+    _badDataSet = @{@"usedBoolean": @"YES",
+                    @"usedInt16": @"100",
+                    @"usedInt32": @"100",
+                    @"usedInt64": @"100",
+                    @"usedDecimal": @"100",
+                    @"usedFloat": @"100",
+                    @"usedDouble": @"100",
+                    @"usedString": @100,
+                    @"usedData": [@"test" dataUsingEncoding:NSUTF8StringEncoding],
+                    @"usedDate": date};
 }
 
 - (void) testSimpleDataset
@@ -71,7 +71,7 @@
     // Checks the values in the goodDataSet are correctly set
     NSManagedObject * test = [NSEntityDescription insertNewObjectForEntityForName:@"TestEntity" inManagedObjectContext:_moc];
 
-    [test setValuesForKeysWithDictionary:_goodDataset withMappingDictionary:_mapping];
+    [test setKVCValues:_goodDataset withMappingDictionary:_mapping options:nil];
     
     for (NSString * wantedKey in _goodDataset) {
         id value = _goodDataset[wantedKey];
@@ -85,7 +85,7 @@
     // Checks the values from the badDataSet are converted to values equal to the ones in the goodDataSet
     NSManagedObject * test = [NSEntityDescription insertNewObjectForEntityForName:@"TestEntity" inManagedObjectContext:_moc];
 
-    [test setValuesForKeysWithDictionary:_badDataSet withMappingDictionary:_mapping];
+    [test setKVCValues:_badDataSet withMappingDictionary:_mapping options:nil];
     
     for (NSString * wantedKey in _goodDataset) {
         id value = _goodDataset[wantedKey];

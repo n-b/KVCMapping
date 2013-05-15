@@ -8,6 +8,13 @@
 
 #import "NSManagedObject+KVCFetching.h"
 #import "NSManagedObject+Coercion.h"
+#import "NSObject+KVCMapping.h"
+
+NSString* const KVCCreateObjectOption = @"KVCCreateObjectOption";
+NSString* const KVCEntitiesCacheOption = @"KVCEntitiesCacheOption";
+
+NSString* const KVCPrimaryKey = @"KVCPrimaryKey";
+NSString* const KVCMapping = @"KVCMapping";
 
 @implementation NSManagedObject (KVCFetching)
 
@@ -25,15 +32,10 @@
     return nil;
 }
 
-+ (instancetype) fetchObjectInContext:(NSManagedObjectContext*)moc withValue:(id)value forKey:(NSString*)key createObject:(BOOL)createObject instancesCache:(KVCInstancesCache*)instancesCache
++ (instancetype) fetchObjectInContext:(NSManagedObjectContext*)moc withValue:(id)value forKey:(NSString*)key options:(NSDictionary*)options
 {
     NSEntityDescription * entity = [self entityInManagedObjectContext:moc];
-    return [entity fetchObjectInContext:moc withValue:value forKey:key createObject:createObject instancesCache:instancesCache];
-}
-
-+ (instancetype) fetchObjectInContext:(NSManagedObjectContext*)moc withValue:(id)value forKey:(NSString*)key createObject:(BOOL)createObject
-{
-    return [self fetchObjectInContext:moc withValue:value forKey:key createObject:createObject instancesCache:nil];
+    return [entity fetchObjectInContext:moc withValue:value forKey:key options:options];
 }
 
 @end
@@ -42,11 +44,12 @@
 @implementation NSEntityDescription (KVCFetching)
 
 // Find info about key in entity
-- (id) fetchObjectInContext:(NSManagedObjectContext*)moc withValue:(id)value forKey:(NSString*)key createObject:(BOOL)createObject instancesCache:(KVCInstancesCache*)instancesCache
+- (id) fetchObjectInContext:(NSManagedObjectContext*)moc withValue:(id)value forKey:(NSString*)key options:(NSDictionary*)options
 {
     NSAttributeDescription * attributeDesc = [self attributesByName][key];
-    if(nil==attributeDesc)
+    if(nil==attributeDesc) {
         return nil;
+    }
 
 #if DEBUG
     if(!attributeDesc.isIndexed) {
@@ -72,6 +75,8 @@
         return nil;
     
     // Search object, in cache if possible
+    KVCEntitiesCache * entitiesCache = options[KVCEntitiesCacheOption];
+    KVCInstancesCache * instancesCache = entitiesCache[self.name];
     NSManagedObject * obj;
     if(instancesCache) {
         obj = instancesCache[correctValue];
@@ -93,6 +98,7 @@
         obj = [result lastObject];
     }
     
+    BOOL createObject = [options[KVCCreateObjectOption] boolValue];
     if(nil==obj && createObject)
     {
         obj = [[self class] insertNewObjectForEntityForName:[self name] inManagedObjectContext:moc];
@@ -104,9 +110,18 @@
     return obj;
 }
 
-- (id) fetchObjectInContext:(NSManagedObjectContext*)moc withValue:(id)value forKey:(NSString*)key createObject:(BOOL)createObject
+- (id) fetchObjectInContext:(NSManagedObjectContext*)moc withValues:(id)values withMappingDictionary:(KVCEntityMapping*)entityMapping options:(NSDictionary*)options
 {
-    return [self fetchObjectInContext:moc withValue:value forKey:key createObject:createObject instancesCache:nil];
+    id object;
+    if(entityMapping.primaryKey) {
+        id primaryValue = [values extractValueForPrimaryKeyWithEntityMapping:entityMapping];
+        object = [self fetchObjectInContext:moc withValue:primaryValue forKey:entityMapping.primaryKey options:options];
+    } else {
+        // Alway create subobjects with no primarykey
+        object = [[self class] insertNewObjectForEntityForName:self.name inManagedObjectContext:moc];
+    }
+    [object kvc_setValues:values withEntityMapping:entityMapping options:options];
+    return object;
 }
 
 @end

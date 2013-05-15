@@ -6,6 +6,7 @@
 //  Copyright (c) 2012 Capitaine Train. All rights reserved.
 //
 #import "KVCEntitiesCache.h"
+#import "KVCEntityMapping.h"
 
 // KVCFetching
 //
@@ -26,8 +27,7 @@
 //
 // if instancesCache is is used, no actual Coredata fetch is performed, but the cache is simply searched for the object.
 // if an object is created, it is added to the cache.
-+ (instancetype) fetchObjectInContext:(NSManagedObjectContext*)moc withValue:(id)value forKey:(NSString*)key createObject:(BOOL)createObject instancesCache:(KVCInstancesCache*)instancesCache;
-+ (instancetype) fetchObjectInContext:(NSManagedObjectContext*)moc withValue:(id)value forKey:(NSString*)key createObject:(BOOL)createObject;
++ (instancetype) fetchObjectInContext:(NSManagedObjectContext*)moc withValue:(id)value forKey:(NSString*)key options:(NSDictionary*)options;
 
 @end
 
@@ -37,7 +37,15 @@
 //
 // if instancesCache is is used, no actual Coredata fetch is performed, but the cache is simply searched for the object.
 // if an object is created, it is added to the cache.
-- (id) fetchObjectInContext:(NSManagedObjectContext*)moc withValue:(id)value forKey:(NSString*)key createObject:(BOOL)createObject instancesCache:(KVCInstancesCache*)instancesCache;
-- (id) fetchObjectInContext:(NSManagedObjectContext*)moc withValue:(id)value forKey:(NSString*)key createObject:(BOOL)createObject;
+- (id) fetchObjectInContext:(NSManagedObjectContext*)moc withValue:(id)value forKey:(NSString*)key options:(NSDictionary*)options;
+
+- (id) fetchObjectInContext:(NSManagedObjectContext*)moc withValues:(id)values withMappingDictionary:(KVCEntityMapping*)mapping options:(NSDictionary*)options;
 
 @end
+
+// options keys
+extern NSString* const KVCCreateObjectOption;  // A NSNumber (bool)
+extern NSString* const KVCEntitiesCacheOption; // A KVCEntitiesCache
+
+extern NSString* const KVCPrimaryKey;
+extern NSString* const KVCMapping;

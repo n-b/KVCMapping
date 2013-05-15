@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "KVCEntityMapping.h"
 
 @interface NSObject (KVCMapping)
 /* 
@@ -35,47 +36,45 @@
  
  More complex mapping can specify valuetransformers by name in the mapping dictionary, such as :
  	@{
- 		@"updated_at": @"ISOFormattedStringToDateValueTransformer:updateDate"
+ 		@"updated_at": @{ @"property": @"updateDate", @"transformer": @"ISOFormattedStringToDateValueTransformer"
  	}
  This would use the value for the key "updated_at", 
  pass it through the the NSValueTransformer registered for the name "ISOFormattedStringToDateValueTransformer",
  and assign it to the object for the key "updateDate".
 
- Using the same wantedKey for several real keys
- ----------------------------------------------
+ Mapping the same key for several properties
+ -------------------------------------------
 
  The mapping dictionary can map the same external key to several internal model keys, by using an array of strings instead of a single string :
   	@{
- 		@"updated_at": @[ @"updateDate", @"creationDate" ]
+ 		@"updated_at": @[ @{@"property: @"updateDate"}, @{@"property": @"creationDate"} ]
  	}
 
  Or even using different value transformers for each model key :
   	@{
- 		@"duration": @[ @"DurationToMinutesValueTransformer:durationMinutes", @"DurationToHoursValueTransformer:durationHours" ]
+ 		@"duration": @[ @{@"property": @"durationMinutes, @"transformer": @"DurationToMinutesValueTransformer"},
+                        @{@"property": @"durationHours", @"transformer" @"DurationToHoursValueTransformer"} ]
  	}
- 
- Automatic Type Coercion
- -----------------------
- 
- For NSManagedObjects, - setValue:forKey:withMappingDictionary also does automatic type coercion from string to numbers and vice-versa.
- 
+  
  */
-- (void) setValue:(id)value forKey:(NSString*)wantedKey withMappingDictionary:(NSDictionary*)kvcMappingDictionnary;
+- (void) setKVCValue:(id)value forKey:(NSString*)wantedKey withMappingDictionary:(NSDictionary*)kvcMappingDictionnary options:(NSDictionary*)options;
 
 /*
- Calls - setValue:forKey:withMappingDictionary: repeatedly with the key-value pairs in `keyedValues`.
+ Calls - setValue:forKey:withMappingDictionary: repeatedly with the key-value pairs in `keyedValues` if values is a dictionary, 
+ or with each value (using the index as the key) if `values` is an array.
  */
-- (void) setValuesForKeysWithDictionary:(NSDictionary *)keyedValues withMappingDictionary:(NSDictionary*)kvcMappingDictionnary;
+- (void) setKVCValues:(id)values withMappingDictionary:(NSDictionary*)mappingDict options:(NSDictionary*)options;
+
+- (void) kvc_setValues:(id)values withEntityMapping:(KVCEntityMapping*)entityMapping options:(NSDictionary*)options;
+- (void) kvc_setValue:(id)value forKey:(id)wantedKey withEntityMapping:(KVCEntityMapping*)entityMapping options:(NSDictionary*)options;
+
 @end
 
-#pragma mark -
-
-/*
- * Helper methods
- */
-@interface NSString (KVCMappingKeysHelperMethods)
-
-// Formats a transformer key, <transformer>:<key>.
-//
-- (NSString*) usingKVCValueTransformerNamed:(NSString*)valueTransformerName;
+@interface NSDictionary (KVCMapping)
+- (id) extractValueForPrimaryKeyWithEntityMapping:(KVCEntityMapping*)entityMapping;
 @end
+
+@interface NSArray (KVCMapping)
+- (id) extractValueForPrimaryKeyWithEntityMapping:(KVCEntityMapping*)entityMapping;
+@end
+

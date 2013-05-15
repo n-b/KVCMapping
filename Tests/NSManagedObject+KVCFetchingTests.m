@@ -56,9 +56,9 @@
     TestEntityClass * objectB = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:moc];
     objectB.testAttribute = @"B";
 
-    STAssertEqualObjects([TestEntityClass fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" createObject:NO], objectA, nil);
-    STAssertEqualObjects([TestEntityClass fetchObjectInContext:moc withValue:@"B" forKey:@"testAttribute" createObject:NO], objectB, nil);
-    STAssertEqualObjects([TestEntityClass fetchObjectInContext:moc withValue:@"C" forKey:@"testAttribute" createObject:NO], nil, nil);
+    STAssertEqualObjects([TestEntityClass fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:nil], objectA, nil);
+    STAssertEqualObjects([TestEntityClass fetchObjectInContext:moc withValue:@"B" forKey:@"testAttribute" options:nil], objectB, nil);
+    STAssertEqualObjects([TestEntityClass fetchObjectInContext:moc withValue:@"C" forKey:@"testAttribute" options:nil], nil, nil);
 }
 
 - (void) testFetchObjectWithCoercion
@@ -67,17 +67,17 @@
     TestEntityClass * objectA = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:moc];
     objectA.testAttribute = @"1234";
     
-    STAssertEqualObjects([TestEntityClass fetchObjectInContext:moc withValue:@1234 forKey:@"testAttribute" createObject:NO], objectA, nil);
+    STAssertEqualObjects([TestEntityClass fetchObjectInContext:moc withValue:@1234 forKey:@"testAttribute" options:nil], objectA, nil);
 }
 
 - (void) testCreateOrFetchObject
 {
-    STAssertEqualObjects([TestEntityClass fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" createObject:NO], nil, nil);
-    TestEntityClass * objectA = [TestEntityClass fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" createObject:YES];
+    STAssertEqualObjects([TestEntityClass fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:nil], nil, nil);
+    TestEntityClass * objectA = [TestEntityClass fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:@{KVCCreateObjectOption:@YES}];
     STAssertNotNil(objectA, nil);
     objectA.testAttribute = @"A";
 
-    STAssertEqualObjects([TestEntityClass fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" createObject:NO], objectA, nil);
+    STAssertEqualObjects([TestEntityClass fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:nil], objectA, nil);
 }
 
 - (void) testFetchObjectWithCache
@@ -91,7 +91,8 @@
                                                                 inContext:moc onKey:@"testAttribute"];
 
     STAssertEqualObjects(cache[@"TestEntityWithClass"][@"A"], objectA, nil);
-    STAssertEqualObjects([TestEntityClass fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" createObject:YES instancesCache:cache[@"TestEntityWithClass"]], objectA, nil);
+
+    STAssertEqualObjects([TestEntityClass fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:(@{KVCCreateObjectOption:@YES, KVCEntitiesCacheOption:cache})], objectA, nil);
 }
 
 - (void) testCreateObjectWithCacheMiss
@@ -100,10 +101,10 @@
                                                                                         inManagedObjectContext:moc]]
                                                                 inContext:moc onKey:@"testAttribute"];
 
-    TestEntityClass * objectA = [TestEntityClass fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" createObject:NO instancesCache:cache[@"TestEntityWithClass"]];
+    TestEntityClass * objectA = [TestEntityClass fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:(@{KVCEntitiesCacheOption:cache})];
     STAssertNil(objectA, nil);
 
-    objectA = [TestEntityClass fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" createObject:YES instancesCache:cache[@"TestEntityWithClass"]];
+    objectA = [TestEntityClass fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:(@{KVCCreateObjectOption:@YES, KVCEntitiesCacheOption:cache})];
     STAssertNotNil(objectA, nil);
     STAssertEqualObjects(objectA.testAttribute, @"A", nil);
     

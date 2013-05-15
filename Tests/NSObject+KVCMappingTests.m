@@ -6,7 +6,7 @@
 //  Copyright (c) 2011 Nicolas Bouilleaud. All rights reserved.
 //
 #import <SenTestingKit/SenTestingKit.h>
-#import "NSObject+KVCMapping.h"
+#import "KVCMapping.h"
 
 #pragma mark Forward Declarations
 
@@ -37,8 +37,7 @@
 {
     TestClass * test = [TestClass new];
 
-    [test setValue:@"testValue" forKey:@"usedProperty" withMappingDictionary:
-     @{@"usedProperty": @"actualProperty1"}];
+    [test setKVCValue:@"testValue" forKey:@"usedProperty" withMappingDictionary:@{@"usedProperty": @"actualProperty1"} options:nil ];
 
     STAssertThrows([test valueForKey:@"usedName"], nil);
     STAssertEqualObjects([test valueForKey:@"actualProperty1"], @"testValue", nil);
@@ -48,10 +47,21 @@
 {
     TestClass * test = [TestClass new];
     
-    [test setValuesForKeysWithDictionary:(@{@"usedProperty1" : @"testValue1",
-                                          @"usedProperty2" : @"testValue2"})
-                   withMappingDictionary:(@{@"usedProperty1": @"actualProperty1",
-                                          @"usedProperty2": @"actualProperty2"})];
+    [test setKVCValues:@{@"usedProperty1" : @"testValue1", @"usedProperty2" : @"testValue2"}
+ withMappingDictionary:@{@"usedProperty1": @"actualProperty1", @"usedProperty2": @"actualProperty2"}
+               options:nil];
+    
+    STAssertEqualObjects([test valueForKey:@"actualProperty1"], @"testValue1", nil);
+    STAssertEqualObjects([test valueForKey:@"actualProperty2"], @"testValue2", nil);
+}
+
+- (void) testValuesFromArray
+{
+    TestClass * test = [TestClass new];
+    
+    [test setKVCValues:@[@"testValue1", @"testValue2"]
+ withMappingDictionary:@{@0: @"actualProperty1", @1: @"actualProperty2"}
+               options:nil];
     
     STAssertEqualObjects([test valueForKey:@"actualProperty1"], @"testValue1", nil);
     STAssertEqualObjects([test valueForKey:@"actualProperty2"], @"testValue2", nil);
@@ -61,20 +71,18 @@
 {
     TestClass * test = [TestClass new];
 
-    [test setValue:@"testValue" forKey:@"usedProperty" withMappingDictionary:
-     @{@"usedProperty": @[@"actualProperty1",@"actualProperty2"]}];
+    [test setKVCValue:@"testValue" forKey:@"usedProperty" withMappingDictionary:@{@"usedProperty": @[@"actualProperty1",@"actualProperty2"]} options:nil];
 
     STAssertEqualObjects([test valueForKey:@"actualProperty1"], @"testValue", nil);
     STAssertEqualObjects([test valueForKey:@"actualProperty2"], @"testValue", nil);
 }
 
-- (void) testSimpleValueTransformer
+- (void) testKVCSimpleValueTransformer
 {
     [NSValueTransformer setValueTransformer:[UppercaseTransformer new] forName:@"uppercase"];
     TestClass * test = [TestClass new];
 
-    [test setValue:@"testValue" forKey:@"usedProperty" withMappingDictionary:
-     @{@"usedProperty": [@"actualProperty1" usingKVCValueTransformerNamed:@"uppercase"]}];
+    [test setKVCValue:@"testValue" forKey:@"usedProperty" withMappingDictionary:@{@"usedProperty": @"uppercase:actualProperty1"} options:nil];
 
     STAssertEqualObjects([test valueForKey:@"actualProperty1"], @"TESTVALUE", nil);
 }
@@ -85,8 +93,9 @@
     [NSValueTransformer setValueTransformer:[LowercaseTransformer new] forName:@"lowercase"];
     TestClass * test = [TestClass new];
     
-    [test setValue:@"testValue" forKey:@"usedProperty" withMappingDictionary:
-     @{@"usedProperty": @[@"uppercase:actualProperty1",@"lowercase:actualProperty2"]}];
+    [test setKVCValue:@"testValue" forKey:@"usedProperty" withMappingDictionary:
+     @{@"usedProperty": @[@"uppercase:actualProperty1",
+     @"lowercase:actualProperty2"]}  options:nil];
     
     STAssertEqualObjects([test valueForKey:@"actualProperty1"], @"TESTVALUE", nil);
     STAssertEqualObjects([test valueForKey:@"actualProperty2"], @"testvalue", nil);

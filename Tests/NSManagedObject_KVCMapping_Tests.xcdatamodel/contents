@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1810" systemVersion="12B19" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="2061" systemVersion="12D78" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="TestEntity" syncable="YES">
         <attribute name="actualBoolean" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="actualCompositeString1" optional="YES" attributeType="String" syncable="YES"/>
@@ -18,17 +18,19 @@
         <attribute name="testAttribute" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="TestRelatedEntityA" syncable="YES">
-        <attribute name="attributeInA" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="relationToB" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="TestRelatedEntityB" inverseName="relationToA" inverseEntity="TestRelatedEntityB" syncable="YES"/>
+        <attribute name="attributeInA" attributeType="String" syncable="YES"/>
+        <relationship name="relationToB" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="TestRelatedEntityB" inverseName="relationToA" inverseEntity="TestRelatedEntityB" syncable="YES"/>
+        <relationship name="relationToManyBs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TestRelatedEntityB" inverseName="relationToManyAs" inverseEntity="TestRelatedEntityB" syncable="YES"/>
     </entity>
     <entity name="TestRelatedEntityB" syncable="YES">
-        <attribute name="attributeInB" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="relationToA" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="TestRelatedEntityA" inverseName="relationToB" inverseEntity="TestRelatedEntityA" syncable="YES"/>
+        <attribute name="attributeInB" attributeType="String" syncable="YES"/>
+        <relationship name="relationToA" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="TestRelatedEntityA" inverseName="relationToB" inverseEntity="TestRelatedEntityA" syncable="YES"/>
+        <relationship name="relationToManyAs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TestRelatedEntityA" inverseName="relationToManyBs" inverseEntity="TestRelatedEntityA" syncable="YES"/>
     </entity>
     <elements>
-        <element name="TestEntity" positionX="160" positionY="192" width="128" height="225"/>
-        <element name="TestEntityWithClass" positionX="160" positionY="192" width="128" height="60"/>
-        <element name="TestRelatedEntityA" positionX="160" positionY="192" width="128" height="75"/>
-        <element name="TestRelatedEntityB" positionX="160" positionY="192" width="128" height="75"/>
+        <element name="TestEntity" positionX="-189" positionY="63" width="128" height="225"/>
+        <element name="TestEntityWithClass" positionX="-38" positionY="63" width="128" height="60"/>
+        <element name="TestRelatedEntityA" positionX="-36" positionY="144" width="128" height="90"/>
+        <element name="TestRelatedEntityB" positionX="124" positionY="144" width="128" height="90"/>
     </elements>
 </model>
