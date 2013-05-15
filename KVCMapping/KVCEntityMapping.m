@@ -7,141 +7,362 @@
 //
 
 #import "KVCEntityMapping.h"
-#import "NSManagedObject+KVCFetching.h"
+#import "NSAttributeDescription+Coercion.h"
+#import "NSManagedObject+KVCRelationship.h"
 
 #pragma mark - Private Methods
 
+@interface KVCModelMapping ()
+@property (readonly) NSDictionary * entityMappings;
+@end
+
 @interface KVCEntityMapping ()
-@property id primaryKey;
-@property NSDictionary * keysMappings;
+@property (readonly) NSArray * keyMappings;
 @end
 
-@interface KVCPropertyMapping ()
-@property NSString * property;
-@property NSValueTransformer * transformer;
+@interface KVCKeyMapping (KVCMappingDictionary)
+- (id) initWithRawMapping:(id)rawMapping_ key:(id)key_;
 @end
 
-@interface KVCRelationshipMapping ()
-@property NSString * relationship;
-@property NSString * foreignKey;
-@property KVCEntityMapping * mapping;
+/****************************************************************************/
+#pragma mark - KVCModelMapping
+
+@implementation KVCModelMapping
+
+- (KVCEntityMapping*) entityMappingForKey:(id)key
+{
+    return self.entityMappings[key];
+}
+
+- (KVCEntityMapping*) entityMappingForEntityName:(NSString*)entityName
+{
+    for (KVCEntityMapping * entityMapping in [self.entityMappings allValues]) {
+        if ([entityMapping.entityName isEqualToString:entityName]) {
+            return entityMapping;
+        }
+    }
+    return nil;
+}
+
 @end
-
-#pragma mark - Implementations
-
-@implementation KVCKeyMapping
-@end
-
-@implementation KVCPropertyMapping
-@end
-
-@implementation KVCRelationshipMapping
-@end
-
-NSString * const KVCMapTransformerSeparator = @":";
-NSString * const KVCMapRelationshipSeparator = @".";
+/****************************************************************************/
+#pragma mark - KVCEntityMapping
 
 @implementation KVCEntityMapping
 
-#pragma mark - Entity Mapping Factory
-
-- (id)initWithMappingDictionary:(NSDictionary *)mappingDictionary
+- (id) initWithKeyMappings:(NSArray*)keyMappings_ primaryKey:(NSString*)primaryKey_ entityName:(NSString*)entityName_
 {
     self = [super init];
-    if (self) {
-        id primaryKey_ = mappingDictionary[KVCPrimaryKey];
-        NSDictionary * rawEntityMapping_ = mappingDictionary[KVCMapping] ?: mappingDictionary;
-        
-        NSMutableDictionary * keysMappings = [NSMutableDictionary new];
-        // For each key
+    _keyMappings = keyMappings_;
+    _primaryKey = primaryKey_;
+    _entityName = entityName_;
+    if(_primaryKey) {
+        NSParameterAssert([self keyMappedTo:_primaryKey mapping:NULL]!=nil);
+    }
+    return self;
+}
+
+- (NSArray*) mappingsForKey:(id)key
+{
+    return [self.keyMappings filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(KVCKeyMapping* keymapping, NSDictionary *bindings) {
+        return [keymapping.key isEqual:key];
+    }]];
+}
+
+- (id)keyMappedTo:(NSString*)property mapping:(KVCPropertyMapping**)mapping
+{
+    for (KVCKeyMapping * keyMapping in self.keyMappings) {
+        if([keyMapping isKindOfClass:[KVCPropertyMapping class]] &&
+           [((KVCPropertyMapping*)keyMapping).property isEqualToString:property]) {
+            if(mapping) {
+                *mapping = (KVCPropertyMapping*)keyMapping;
+            }
+            return keyMapping.key;
+        }
+    }
+    return nil;
+}
+
+- (id) kvc_extractValueForProperty:(id)property fromValues:(id)values
+{
+    KVCPropertyMapping * propertyMapping;
+    id key = [self keyMappedTo:property mapping:&propertyMapping];
+    id value;
+    if([values isKindOfClass:[NSDictionary class]]) {
+        value = values[key];
+    } else if ([values isKindOfClass:[NSArray class]]) {
+        value = values[[key unsignedIntegerValue]];
+    }
+    
+    if(propertyMapping.transformer) {
+        value = [propertyMapping.transformer transformedValue:value];
+    }
+    return value;
+}
+
+@end
+
+/****************************************************************************/
+#pragma mark - Mapping Dictionary Factories
+
+@implementation NSString (KVCMappingDictionary)
+- (NSArray*) kvc_splitWithSeparator:(NSString*)separator
+{
+    NSRange range = [self rangeOfString:separator];
+    if(range.location==NSNotFound) {
+        return @[self];
+    } else {
+        return @[[self substringToIndex:range.location], [self substringFromIndex:range.location+range.length]];
+    }
+}
+@end
+
+NSString * const KVCMapTransformerSeparator = @":";
+NSString * const KVCMapPrimaryKeySeparator = @".";
+
+@implementation KVCModelMapping (KVCMappingDictionary)
+- (id)initWithMappingDictionary:(NSDictionary *)rawModelMapping_
+{
+    self = [super init];
+    NSMutableDictionary * dict = [NSMutableDictionary new];
+    for (NSArray * keys in rawModelMapping_) {
+        NSDictionary * entityDict = rawModelMapping_[keys];
+        NSParameterAssert([entityDict count]==1);
+        NSString * entityNameAndPrimaryKey = [entityDict allKeys][0];
+        NSArray * components = [entityNameAndPrimaryKey componentsSeparatedByString:KVCMapPrimaryKeySeparator];
+        NSString * entityName = components[0];
+        NSString * primaryKey = [components count]>1 ? components[1] : nil;
+        NSDictionary * entityMappingDictionary = [entityDict allValues][0];
+        KVCEntityMapping * entityMapping = [[KVCEntityMapping alloc] initWithMappingDictionary:entityMappingDictionary
+                                                                                    primaryKey:primaryKey
+                                                                                    entityName:entityName];
+        if([keys isKindOfClass:[NSArray class]]) {
+            for (id key in keys) {
+                dict[key] = entityMapping;
+            }
+        } else {
+            dict[keys] = entityMapping;
+        }
+    }
+    _entityMappings = [NSDictionary dictionaryWithDictionary:dict];
+    
+    return self;
+}
+@end
+
+@implementation KVCEntityMapping (KVCMappingDictionary)
+- (id)initWithMappingDictionary:(NSDictionary *)rawEntityMapping_ primaryKey:(NSString*)primaryKey_ entityName:(NSString*)entityName_
+{
+    NSMutableArray * keyMappings = [NSMutableArray new];
+    // For each key
+    if(rawEntityMapping_) {
         for (NSString* key_ in rawEntityMapping_) {
-            NSMutableArray * keyMappings = [NSMutableArray new];
             id rawMappings_ = rawEntityMapping_[key_];
             if(![rawMappings_ isKindOfClass:[NSArray class]]) {
                 rawMappings_ = @[rawMappings_];
             }
             // For each mapping
             for (id rawMapping_ in rawMappings_) {
-                if([rawMapping_ isKindOfClass:[KVCKeyMapping class]]) {
-                    [keyMappings addObject:rawMapping_];
-                } else {
-                    NSParameterAssert([rawMapping_ isKindOfClass:[NSString class]] || [rawMapping_ isKindOfClass:[NSDictionary class]]);
-                    
-                    if([rawMapping_ isKindOfClass:[NSString class]]) {
-                        // Parse raw mapping string
-                        NSArray * components;
-                        
-                        // relationship
-                        components = [rawMapping_ componentsSeparatedByString:KVCMapRelationshipSeparator];
-                        if([components count]==2) {
-                            KVCRelationshipMapping * relationshipMapping = [KVCRelationshipMapping new];
-                            relationshipMapping.relationship = components[0];
-                            relationshipMapping.foreignKey = components[1];
-                            [keyMappings addObject:relationshipMapping];
-                            continue;
-                        }
-                        
-                        // transformed property
-                        components = [rawMapping_ componentsSeparatedByString:KVCMapTransformerSeparator];
-                        if([components count]==2) {
-                            NSValueTransformer * transformer = [NSValueTransformer valueTransformerForName:components[0]];
-                            NSParameterAssert(transformer);
-                            KVCPropertyMapping * propertyMapping = [KVCPropertyMapping new];
-                            propertyMapping.property = components[1];
-                            propertyMapping.transformer = transformer;
-                            [keyMappings addObject:propertyMapping];
-                            continue;
-                        }
-                        
-                        // direct property
-                        {
-                            KVCPropertyMapping * propertyMapping = [KVCPropertyMapping new];
-                            propertyMapping.property = rawMapping_;
-                            [keyMappings addObject:propertyMapping];
-                        }
-                    } else {
-                        // sub-object
-                        // key:relationship, value: mapping dictionary
-                        NSParameterAssert([rawMapping_ count]==1);
-                        NSString * relationship = [[rawMapping_ allKeys] lastObject];
-                        NSDictionary * submappingDictionary = [[rawMapping_ allValues] lastObject];
-                        KVCRelationshipMapping * relationshipMapping = [KVCRelationshipMapping new];
-                        relationshipMapping.relationship = relationship;
-                        relationshipMapping.mapping = [[KVCEntityMapping alloc] initWithMappingDictionary:submappingDictionary];
-                        [keyMappings addObject:relationshipMapping];
-                    }
-                }
+                [keyMappings addObject:[[KVCKeyMapping alloc] initWithRawMapping:rawMapping_ key:key_]];
             }
-            keysMappings[key_] = [NSArray arrayWithArray:keyMappings];
         }
-        self.keysMappings = [NSDictionary dictionaryWithDictionary:keysMappings];
-        self.primaryKey = primaryKey_;
-        return self;
+    } else {
+        [keyMappings addObject:[[KVCKeyMapping alloc] initWithRawMapping:primaryKey_ key:primaryKey_]];
     }
+    return [self initWithKeyMappings:[NSArray arrayWithArray:keyMappings] primaryKey:primaryKey_ entityName:entityName_];
+}
+@end
+
+@implementation KVCKeyMapping
+
+- (id) initWithKey:(id)key_
+{
+    self = [super init];
+    _key = key_;
     return self;
 }
 
-- (NSArray*)objectForKeyedSubscript:(id)key
+- (id) initWithRawMapping:(id)rawMapping_ key:(id)key_
 {
-    return [self mappingsForKey:key];
+    if([rawMapping_ isKindOfClass:[self class]]) {
+        ((KVCKeyMapping*)rawMapping_)->_key = key_;
+        return rawMapping_;
+    }
+
+    Class class = [[self class] _mappingClassWithRawMapping:rawMapping_];
+    NSParameterAssert([class isSubclassOfClass:[self class]] && ![class isEqual:[self class]]);
+    return [[class alloc] initWithRawMapping:rawMapping_ key:key_];
 }
 
-- (NSArray*) mappingsForKey:(id)key
++ (Class) _mappingClassWithRawMapping:(id)rawMapping_
 {
-    return self.keysMappings[key];
+    // Parse raw mapping string
+    if([rawMapping_ isKindOfClass:[NSString class]]) {
+        
+        // Relationship
+        if([rawMapping_ rangeOfString:KVCMapPrimaryKeySeparator].location != NSNotFound) {
+            return [KVCRelationshipMapping class];
+        }
+        
+        // Property
+        return [KVCPropertyMapping class];
+    }
+    
+    // Subobject
+    if([rawMapping_ isKindOfClass:[NSDictionary class]]) {
+        return [KVCSubobjectMapping class];
+    }
+    return Nil;
 }
+@end
 
-- (id)keyMappedTo:(NSString*)property
+@implementation KVCPropertyMapping
+- (id) initWithRawMapping:(NSString*)mappingString key:(id)key_
 {
-    for (id key in self.keysMappings) {
-        NSArray* keyMappings = self.keysMappings[key];
-        for (KVCKeyMapping * keyMapping in keyMappings) {
-            if([keyMapping isKindOfClass:[KVCPropertyMapping class]] &&
-               [((KVCPropertyMapping*)keyMapping).property isEqualToString:property])
-                return key;
+    self = [super initWithKey:key_];
+    NSArray * components = [mappingString componentsSeparatedByString:KVCMapTransformerSeparator];
+    if([components count]==2){
+        _property = components[1];
+        _transformer = [NSValueTransformer valueTransformerForName:components[0]];
+        NSParameterAssert(_transformer);
+    } else {
+        _property = components[0];
+    }
+    return self;
+}
+@end
+
+@implementation KVCRelationshipMapping
+- (id) initWithRawMapping:(NSString*)mappingString key:(id)key_
+{
+    self = [super initWithKey:key_];
+    NSArray * components = [mappingString componentsSeparatedByString:KVCMapPrimaryKeySeparator];
+    _relationship = components[0];
+    if([components count]==2)
+        _foreignKey = components[1];
+    return self;
+}
+@end
+
+@implementation KVCSubobjectMapping
+- (id) initWithRawMapping:(NSDictionary*)relationshipDictionary key:(id)key_
+{
+    NSParameterAssert([relationshipDictionary count]==1);
+    self = [super initWithKey:key_];
+    NSArray * components = [[relationshipDictionary allKeys][0] componentsSeparatedByString:KVCMapPrimaryKeySeparator];
+    _relationship = components[0];
+    _mapping = [[KVCEntityMapping alloc] initWithMappingDictionary:[relationshipDictionary allValues][0]
+                                                        primaryKey:[components count]==2?components[1]:nil
+                                                        entityName:nil];
+    return self;
+}
+@end
+
+/****************************************************************************/
+#pragma mark - Assign Value
+
+@implementation KVCKeyMapping (KVCAssignValue)
+- (void) assignValue:(id)value toObject:(id)object options:(NSDictionary*)options {
+    [self doesNotRecognizeSelector:_cmd];
+}
+@end
+
+@implementation KVCPropertyMapping (KVCAssignValue)
+- (void) assignValue:(id)value toObject:(id)object options:(NSDictionary*)options
+{
+    if(self.transformer) {
+        value = [self.transformer transformedValue:value];
+    }
+    
+    // If the object is a NSManagedObject and the property is a CoreData attribute,
+    // use the attribute description to convert value, if necessary.
+    if([[object class] isSubclassOfClass:[NSManagedObject class]]) {
+        NSAttributeDescription * attributeDesc = [[object entity] attributesByName][self.property];
+        if(attributeDesc) {
+            value = [attributeDesc kvc_coerceValue:value];
         }
     }
-    return nil;
+    
+    [object setValue:value forKey:self.property];
 }
+@end
 
+@implementation KVCRelationshipMapping (KVCAssignValue)
+- (void) assignValue:(id)value toObject:(id)object options:(NSDictionary*)options
+{
+    [object kvc_setRelationship:self.relationship withObjectsWithValues:value forKey:self.foreignKey options:options];
+}
+@end
+
+@implementation KVCSubobjectMapping (KVCAssignValue)
+- (void) assignValue:(id)value toObject:(id)object options:(NSDictionary*)options
+{
+    [object kvc_setRelationship:self.relationship with:value withMapping:self.mapping options:options];
+}
+@end
+
+/****************************************************************************/
+#pragma mark Descriptions
+
+@implementation KVCKeyMapping (KVCDescription)
+- (NSString*) description
+{
+    return [self descriptionWithIndent:0];
+}
+- (NSString*) descriptionWithIndent:(NSUInteger)indent
+{
+    return [NSString stringWithFormat:@"Mapping key %@",self.key];
+}
+@end
+
+@implementation KVCEntityMapping (KVCDescription)
+- (NSString*) description
+{
+    return [self descriptionWithIndent:0];
+}
+- (NSString*) descriptionWithIndent:(NSUInteger)indent
+{
+    NSMutableString * description = [NSMutableString stringWithFormat:@"Entity Mapping: %p primary key: %@",self, self.primaryKey];
+    for (KVCKeyMapping* keyMapping in self.keyMappings) {
+        [description appendString:@"\n"];
+        for (NSUInteger i=0; i<indent+1; i++) {
+            [description appendString:@"\t"];
+        }
+        [description appendString:[keyMapping descriptionWithIndent:indent]];
+    }
+    return description;
+}
+@end
+
+@implementation KVCPropertyMapping (KVCDescription)
+- (NSString*) descriptionWithIndent:(NSUInteger)indent
+{
+    return [NSString stringWithFormat:@"%@ to property %@, transformer %@",[super descriptionWithIndent:indent], self.property, self.transformer];
+}
+@end
+
+@implementation KVCRelationshipMapping (KVCDescription)
+- (NSString*) descriptionWithIndent:(NSUInteger)indent
+{
+    return [NSString stringWithFormat:@"%@ to relationship %@, foreign key %@",[super descriptionWithIndent:indent], self.relationship, self.foreignKey];
+}
+@end
+
+@implementation KVCSubobjectMapping (KVCDescription)
+- (NSString*) descriptionWithIndent:(NSUInteger)indent
+{
+    return [NSString stringWithFormat:@"%@ to relationship %@, submapping %@",[super descriptionWithIndent:indent], self.relationship, [self.mapping descriptionWithIndent:indent+1]];
+}
+@end
+
+@implementation KVCModelMapping (KVCDescription)
+- (NSString*) description
+{
+    NSMutableString * description = [NSMutableString stringWithFormat:@"Model Mapping: %p",self];
+    for (KVCEntityMapping* entityMappinMapping in self.entityMappings) {
+        [description appendString:@"\n\t"];
+        [description appendString:[entityMappinMapping descriptionWithIndent:1]];
+    }
+    return description;
+}
 @end

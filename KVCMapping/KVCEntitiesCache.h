@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Capitaine Train. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "KVCEntityMapping.h"
 
 @class KVCInstancesCache;
 
@@ -17,21 +17,39 @@
 // An Entities Cache is built before a large Fetch/Set/Set operation, like a parsing.
 // It will then be used instead of actual accesses to the CoreData database.
 //
-//
+
+// A collection of Instance Caches
 @interface KVCEntitiesCache : NSObject
-// Create a Cache, by fetching all the objects if the specified entities in the context.
-// All objects are then stored in instance caches, using the key specified.
-- (id)initWithEntities:(NSArray*)entities inContext:(NSManagedObjectContext*)context onKey:(NSString*)key;
+- (id) initWithInstanceCaches:(NSArray*)instanceCaches;
 - (KVCInstancesCache*) instancesCacheForEntity:(NSEntityDescription*)entity;
 - (NSSet*) accessedInstances;
 @end
 
 // A simple key-value collection for each Entity Cache.
 @interface KVCInstancesCache : NSObject
+// Fetches all instances of an entity, and cache it using the specified key.
+- (id) initWithContext:(NSManagedObjectContext*)moc entityName:(NSString*)entityName primaryKey:(id)primaryKey;
+@property (readonly) NSEntityDescription * entityDescription;
 - (id) instanceForKey:(id)key;
 - (void) setInstance:(id)instance forKey:(id<NSCopying>)key;
+// Everytime an instance is accessed from the cache (via instanceForKey:), it's added to this property.
 - (NSSet*) accessedInstances;
 @end
+
+#pragma mark - Creation using a ModelMapping
+
+@interface KVCEntitiesCache (ModelMapping)
+// Create instance caches on the specified `moc` for the Entities described in `modelMapping`,
+// using only the EntityMappings fro the passed `keys`.
+- (id) initWithObjectKeys:(NSArray*)keys inModelMapping:(KVCModelMapping*)modelMapping inContext:(NSManagedObjectContext*)moc;
+@end
+
+@interface KVCInstancesCache (ModelMapping)
+// Create an Instance cache on the specifiec context using the entity info (entity name and primary key) from the mapping
+- (id) initWithContext:(NSManagedObjectContext*)moc entityMapping:(KVCEntityMapping*)entityMapping;
+@end
+
+#pragma mark - Subscripting
 
 @interface KVCEntitiesCache (Subscripting)
 - (KVCInstancesCache*)objectForKeyedSubscript:(id)key;

@@ -8,11 +8,6 @@
 
 #import "KVCEntitiesCache.h"
 
-@interface KVCInstancesCache ()
-- (id) initWithInstances:(NSMutableDictionary*)instances;
-@end
-
-/****************************************************************************/
 #pragma mark KVCEntitiesCache
 
 @implementation KVCEntitiesCache
@@ -20,25 +15,13 @@
     NSDictionary * _entitiesCache;
 }
 
-- (id)initWithEntities:(NSArray*)entities inContext:(NSManagedObjectContext*)context onKey:(NSString*)key
+- (id) initWithInstanceCaches:(NSArray*)instanceCaches_
 {
     self = [super init];
     NSMutableDictionary * dict = [NSMutableDictionary new];
-    for (NSEntityDescription* entity in entities) {
-        NSFetchRequest * frequest = [NSFetchRequest new];
-        frequest.entity = entity;
-        frequest.returnsObjectsAsFaults = NO; // Actually load everything.
-        NSError * error;
-        NSArray * objects = [context executeFetchRequest:frequest error:&error];
-        NSAssert(error==nil, @"fetch should not fail %@ %@", frequest, error);
-        NSMutableDictionary * instances = [NSMutableDictionary new];
-        for (id object in objects) {
-            instances[[object valueForKey:key]] = object;
-        }
-
-        dict[entity.name] = [[KVCInstancesCache alloc] initWithInstances:instances];
+    for (KVCInstancesCache * instanceCache in instanceCaches_) {
+        dict[instanceCache.entityDescription.name] = instanceCache;
     }
-    
     _entitiesCache = [NSDictionary dictionaryWithDictionary:dict];
     return self;
 }
@@ -55,7 +38,6 @@
 
 @end
 
-/****************************************************************************/
 #pragma mark KVCInstancesCache
 
 @implementation KVCInstancesCache
@@ -64,18 +46,30 @@
     NSMutableSet * _accessedInstances;
 }
 
-- (id)init
+- (id) initWithContext:(NSManagedObjectContext*)moc entityName:(NSString*)entityName primaryKey:(id)primaryKey
+{
+    self = [super init];
+    NSEntityDescription * entityDescription = [NSEntityDescription entityForName:entityName inManagedObjectContext:moc];
+    NSFetchRequest * frequest = [NSFetchRequest new];
+    frequest.entity = entityDescription;
+    frequest.returnsObjectsAsFaults = NO; // Actually load everything.
+    NSError * error;
+    NSArray * objects = [moc executeFetchRequest:frequest error:&error];
+    NSAssert(error==nil, @"fetch should not fail %@ %@", frequest, error);
+    NSMutableDictionary * instances = [NSMutableDictionary new];
+    for (id object in objects) {
+        instances[[object valueForKey:primaryKey]] = object;
+    }
+    _instances = instances;
+    _entityDescription = entityDescription;
+    _accessedInstances = [NSMutableSet new];
+    return self;
+}
+
+- (id) init
 {
     [self doesNotRecognizeSelector:_cmd];
     return nil;
-}
-
-- (id) initWithInstances:(NSMutableDictionary*)instances_;
-{
-    self = [super init];
-    _instances = instances_;
-    _accessedInstances = [NSMutableSet new];
-    return self;
 }
 
 - (id) instanceForKey:(id)key
@@ -100,7 +94,31 @@
 
 @end
 
-/****************************************************************************/
+
+#pragma mark - Creation using a ModelMapping
+
+@implementation KVCEntitiesCache (ModelMapping)
+- (id) initWithObjectKeys:(NSArray*)keys inModelMapping:(KVCModelMapping*)modelMapping inContext:(NSManagedObjectContext*)moc
+{
+    NSMutableArray * instanceCaches = [NSMutableArray new];
+    for (NSString * key in keys) {
+        KVCEntityMapping * entityMapping = [modelMapping entityMappingForKey:key];
+        if(entityMapping) {
+            [instanceCaches addObject:[[KVCInstancesCache alloc] initWithContext:moc
+                                                                   entityMapping:entityMapping]];
+        }
+    }
+    return [self initWithInstanceCaches:instanceCaches];
+}
+@end
+
+@implementation KVCInstancesCache (ModelMapping)
+- (id) initWithContext:(NSManagedObjectContext*)moc entityMapping:(KVCEntityMapping*)entityMapping
+{
+    return [self initWithContext:moc entityName:entityMapping.entityName primaryKey:entityMapping.primaryKey];
+}
+@end
+
 #pragma mark - Subscripting
 
 @implementation KVCEntitiesCache (Subscripting)

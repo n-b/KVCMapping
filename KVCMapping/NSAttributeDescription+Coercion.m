@@ -1,18 +1,27 @@
 //
-//  NSManagedObject+Coercion.m
+//  NSAttributeDescription+Coercion.m
 //  CapitaineTrain
 //
-//  Created by Nicolas Bouilleaud on 20/09/12.
-//  Copyright (c) 2012 Nicolas Bouilleaud. All rights reserved.
+//  Created by Nicolas Bouilleaud - Capitaine Train on 20/09/12.
+//  Copyright (c) 2012 Capitaine Train. All rights reserved.
 //
 
-#import "NSManagedObject+Coercion.h"
+#import "NSAttributeDescription+Coercion.h"
 
-@implementation NSManagedObject (Coercion)
+@implementation NSAttributeDescription (Coercion)
 
-+ (id) coerceValue:(id)value toAttributeType:(NSAttributeType)attributeType
+- (id) kvc_coerceValue:(id)value
 {
-    switch (attributeType)
+    if(nil==value) {
+        return nil;
+    }
+    
+    Class expectedClass = NSClassFromString(self.attributeValueClassName);
+    if( [value isKindOfClass:expectedClass]) {
+        return value;
+    }
+    
+    switch (self.attributeType)
     {
             // Numbers
             /*

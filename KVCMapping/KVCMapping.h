@@ -6,9 +6,10 @@
 //  Copyright (c) 2013 Capitaine Train. All rights reserved.
 //
 
-#import "NSObject+KVCMapping.h"
 #import "KVCEntityMapping.h"
-#import "NSManagedObject+Coercion.h"
+#import "NSObject+KVCMapping.h"
+#import "NSManagedObjectContext+KVCMapping.h"
+#import "NSAttributeDescription+Coercion.h"
 #import "NSManagedObject+KVCRelationship.h"
-#import "NSManagedObject+KVCFetching.h"
+#import "NSEntityDescription+KVCFetching.h"
 #import "KVCEntitiesCache.h"

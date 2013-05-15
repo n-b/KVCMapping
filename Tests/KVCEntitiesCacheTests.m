@@ -6,6 +6,7 @@
 //  Copyright (c) 2011 Nicolas Bouilleaud. All rights reserved.
 //
 #import <SenTestingKit/SenTestingKit.h>
+#import "KVCEntitiesCache.h"
 #import "NSManagedObject+KVCRelationship.h"
 
 /****************************************************************************/
@@ -44,9 +45,10 @@
    
     // When
     // Create a cache of A instances
-    KVCEntitiesCache * cache = [[KVCEntitiesCache alloc] initWithEntities:@[[NSEntityDescription entityForName:@"TestRelatedEntityA"
-                                                                                        inManagedObjectContext:moc]]
-                                                                inContext:moc onKey:@"attributeInA"];
+    KVCEntitiesCache * cache = [[KVCEntitiesCache alloc] initWithInstanceCaches:
+                                @[[[KVCInstancesCache alloc] initWithContext:moc
+                                                                  entityName:@"TestRelatedEntityA"
+                                                                  primaryKey:@"attributeInA"]]];
 
     // Then
     STAssertEqualObjects(cache[@"TestRelatedEntityA"][@"value1"], a1, @"object a1 should be in cache");
@@ -76,10 +78,11 @@
     
     // When
     // Create a cache of A instances
-    KVCEntitiesCache * cache = [[KVCEntitiesCache alloc] initWithEntities:@[[NSEntityDescription entityForName:@"TestRelatedEntityA"
-                                                                                        inManagedObjectContext:moc]]
-                                                                inContext:moc onKey:@"attributeInA"];
-    
+    KVCEntitiesCache * cache = [[KVCEntitiesCache alloc] initWithInstanceCaches:
+                                @[[[KVCInstancesCache alloc] initWithContext:moc
+                                                                  entityName:@"TestRelatedEntityA"
+                                                                  primaryKey:@"attributeInA"]]];
+
     // Then
     STAssertEqualObjects([cache accessedInstances], [NSSet set], @"accessed instances should be empty");
 

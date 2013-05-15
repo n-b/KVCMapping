@@ -10,71 +10,32 @@
 #import "KVCEntityMapping.h"
 
 @interface NSObject (KVCMapping)
-/* 
- KVC Mapping
- -----------
- 
- The passed mapping dictionary is used to translate the wantedKey (the key name in the external representation,
- like a webservice) to the real object property.
- The NSDictionary keys and values should only be NSStrings.
- 
- An example of a simple mapping dictionary would be : 
- 	@{
- 		@"ID": @"identifier"
- 	}
- It can be used for assigning this data:
-    @{
-    	@"ID": @"1234"
-    }
- to an object such as : 
-    @interface SomeObject
-    @property id identifier;
-    @end
- 
- Type Coercion and Value Transformers
- ------------------------------------
- 
- More complex mapping can specify valuetransformers by name in the mapping dictionary, such as :
- 	@{
- 		@"updated_at": @{ @"property": @"updateDate", @"transformer": @"ISOFormattedStringToDateValueTransformer"
- 	}
- This would use the value for the key "updated_at", 
- pass it through the the NSValueTransformer registered for the name "ISOFormattedStringToDateValueTransformer",
- and assign it to the object for the key "updateDate".
 
- Mapping the same key for several properties
- -------------------------------------------
-
- The mapping dictionary can map the same external key to several internal model keys, by using an array of strings instead of a single string :
-  	@{
- 		@"updated_at": @[ @{@"property: @"updateDate"}, @{@"property": @"creationDate"} ]
- 	}
-
- Or even using different value transformers for each model key :
-  	@{
- 		@"duration": @[ @{@"property": @"durationMinutes, @"transformer": @"DurationToMinutesValueTransformer"},
-                        @{@"property": @"durationHours", @"transformer" @"DurationToHoursValueTransformer"} ]
- 	}
-  
- */
-- (void) setKVCValue:(id)value forKey:(NSString*)wantedKey withMappingDictionary:(NSDictionary*)kvcMappingDictionnary options:(NSDictionary*)options;
-
-/*
- Calls - setValue:forKey:withMappingDictionary: repeatedly with the key-value pairs in `keyedValues` if values is a dictionary, 
- or with each value (using the index as the key) if `values` is an array.
- */
-- (void) setKVCValues:(id)values withMappingDictionary:(NSDictionary*)mappingDict options:(NSDictionary*)options;
-
-- (void) kvc_setValues:(id)values withEntityMapping:(KVCEntityMapping*)entityMapping options:(NSDictionary*)options;
+// setValue:forKey:withEntityMapping:options:
+//
+// Set a `value` for a given `wantedKey` of the receiver, using the `entityMapping` to map the value to a real key.
+// * a single `wantedKey` may map to several actual properties or relationships in the receiver. (See KVCKeyMapping)
+// * `wantedKey` can be an NSString or an NSNumber. (See KVCEntityMapping)
+// * `value` should be of the expected type for the KVCKeyMapping
+//
+// If the receiver is an NSManagedObject, this can set relationships and create subobjects.
+// 
+// If the receiver is an NSManagedObject, attempt to automatically coerce the data to the expected type of the property.
+//
+// Does nothing if no mapping is found, or if the value can't be converted to the expected type.
 - (void) kvc_setValue:(id)value forKey:(id)wantedKey withEntityMapping:(KVCEntityMapping*)entityMapping options:(NSDictionary*)options;
 
-@end
+// Batch Method.
+// Calls - kvc_setValue:forKey:withEntityMapping: repeatedly with the passed `values`.
+//
+// `values` can be an NSDictionary or an NSArray;
+// If `values` is a dictionary, its keys are used as the `wantedKey`s.
+// If `values` is an array, its indexes, as NSNumbers, are used as the `wantedKey`s.
+- (void) kvc_setValues:(id)values withEntityMapping:(KVCEntityMapping*)entityMapping options:(NSDictionary*)options;
 
-@interface NSDictionary (KVCMapping)
-- (id) extractValueForPrimaryKeyWithEntityMapping:(KVCEntityMapping*)entityMapping;
-@end
-
-@interface NSArray (KVCMapping)
-- (id) extractValueForPrimaryKeyWithEntityMapping:(KVCEntityMapping*)entityMapping;
+// Convenience variants:
+// Automatically create a KVCEntityMapping with `kvcMappingDictionary`
+- (void) kvc_setValue:(id)value forKey:(NSString*)wantedKey withMappingDictionary:(NSDictionary*)kvcMappingDictionary options:(NSDictionary*)options;
+- (void) kvc_setValues:(id)values withMappingDictionary:(NSDictionary*)kvcMappingDictionary options:(NSDictionary*)options;
 @end
 

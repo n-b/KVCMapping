@@ -71,7 +71,7 @@
     // Checks the values in the goodDataSet are correctly set
     NSManagedObject * test = [NSEntityDescription insertNewObjectForEntityForName:@"TestEntity" inManagedObjectContext:_moc];
 
-    [test setKVCValues:_goodDataset withMappingDictionary:_mapping options:nil];
+    [test kvc_setValues:_goodDataset withMappingDictionary:_mapping options:nil];
     
     for (NSString * wantedKey in _goodDataset) {
         id value = _goodDataset[wantedKey];
@@ -85,7 +85,7 @@
     // Checks the values from the badDataSet are converted to values equal to the ones in the goodDataSet
     NSManagedObject * test = [NSEntityDescription insertNewObjectForEntityForName:@"TestEntity" inManagedObjectContext:_moc];
 
-    [test setKVCValues:_badDataSet withMappingDictionary:_mapping options:nil];
+    [test kvc_setValues:_badDataSet withMappingDictionary:_mapping options:nil];
     
     for (NSString * wantedKey in _goodDataset) {
         id value = _goodDataset[wantedKey];
