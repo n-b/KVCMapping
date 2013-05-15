@@ -29,7 +29,6 @@
 		37A80DF2150B8CE800B9B6E1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A80DF1150B8CE800B9B6E1 /* Foundation.framework */; };
 		37A80E00150B8CE800B9B6E1 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A80DFF150B8CE800B9B6E1 /* SenTestingKit.framework */; };
 		37A80E03150B8CE800B9B6E1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A80DF1150B8CE800B9B6E1 /* Foundation.framework */; };
-		37A80E06150B8CE800B9B6E1 /* libKVCMapping-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A80DEE150B8CE800B9B6E1 /* libKVCMapping-ios.a */; };
 		37EADF77150B8D3C001D3588 /* NSObject+KVCMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 37EADF75150B8D3C001D3588 /* NSObject+KVCMapping.h */; };
 		37EADF78150B8D3C001D3588 /* NSObject+KVCMapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EADF76150B8D3C001D3588 /* NSObject+KVCMapping.m */; };
 		37EADF79150B8D3C001D3588 /* NSObject+KVCMapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EADF76150B8D3C001D3588 /* NSObject+KVCMapping.m */; };
@@ -43,16 +42,6 @@
 		8350CB2A1743BF4800A7E7B9 /* KVCEntitiesCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 8350CB251743BF4800A7E7B9 /* KVCEntitiesCache.m */; };
 		8350CB2C1743BF6C00A7E7B9 /* KVCEntitiesCacheTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8350CB2B1743BF6C00A7E7B9 /* KVCEntitiesCacheTests.m */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		37A80E04150B8CE800B9B6E1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 37A80DE5150B8CE800B9B6E1 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 37A80DED150B8CE800B9B6E1;
-			remoteInfo = KVCMapping;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		37235E741662BCCB00F33BF1 /* libKVCMapping-osx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libKVCMapping-osx.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -111,7 +100,6 @@
 			files = (
 				37A80E00150B8CE800B9B6E1 /* SenTestingKit.framework in Frameworks */,
 				37A80E03150B8CE800B9B6E1 /* Foundation.framework in Frameworks */,
-				37A80E06150B8CE800B9B6E1 /* libKVCMapping-ios.a in Frameworks */,
 				37EADF7D150B8E04001D3588 /* CoreData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -284,7 +272,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				37A80E05150B8CE800B9B6E1 /* PBXTargetDependency */,
 			);
 			name = KVCMappingTests;
 			productName = KVCMappingTests;
@@ -390,14 +377,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		37A80E05150B8CE800B9B6E1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 37A80DED150B8CE800B9B6E1 /* KVCMapping-ios */;
-			targetProxy = 37A80E04150B8CE800B9B6E1 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
 		37235E811662BCCC00F33BF1 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -499,11 +478,9 @@
 		37A80E16150B8CE800B9B6E1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KVCMapping/KVCMapping-Prefix.pch";
 				INFOPLIST_FILE = "Tests/KVCMappingTests-Info.plist";
@@ -515,11 +492,9 @@
 		37A80E17150B8CE800B9B6E1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KVCMapping/KVCMapping-Prefix.pch";
 				INFOPLIST_FILE = "Tests/KVCMappingTests-Info.plist";
