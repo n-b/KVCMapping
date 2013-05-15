@@ -80,6 +80,36 @@
     STAssertEqualObjects([TestEntityClass fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" createObject:NO], objectA, nil);
 }
 
+- (void) testFetchObjectWithCache
+{
+    NSString * entityName = [[TestEntityClass entityInManagedObjectContext:moc] name];
+    TestEntityClass * objectA = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:moc];
+    objectA.testAttribute = @"A";
+    
+    KVCEntitiesCache * cache = [[KVCEntitiesCache alloc] initWithEntities:@[[NSEntityDescription entityForName:@"TestEntityWithClass"
+                                                                                        inManagedObjectContext:moc]]
+                                                                inContext:moc onKey:@"testAttribute"];
+
+    STAssertEqualObjects(cache[@"TestEntityWithClass"][@"A"], objectA, nil);
+    STAssertEqualObjects([TestEntityClass fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" createObject:YES instancesCache:cache[@"TestEntityWithClass"]], objectA, nil);
+}
+
+- (void) testCreateObjectWithCacheMiss
+{
+    KVCEntitiesCache * cache = [[KVCEntitiesCache alloc] initWithEntities:@[[NSEntityDescription entityForName:@"TestEntityWithClass"
+                                                                                        inManagedObjectContext:moc]]
+                                                                inContext:moc onKey:@"testAttribute"];
+
+    TestEntityClass * objectA = [TestEntityClass fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" createObject:NO instancesCache:cache[@"TestEntityWithClass"]];
+    STAssertNil(objectA, nil);
+
+    objectA = [TestEntityClass fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" createObject:YES instancesCache:cache[@"TestEntityWithClass"]];
+    STAssertNotNil(objectA, nil);
+    STAssertEqualObjects(objectA.testAttribute, @"A", nil);
+    
+    STAssertEqualObjects(cache[@"TestEntityWithClass"][@"A"], objectA, nil);
+}
+
 @end
 
 

@@ -68,11 +68,14 @@
 - (void) setValuesForKeysWithDictionary:(NSDictionary *)keyedValues withMappingDictionary:(NSDictionary*)kvcMappingDictionnary;
 @end
 
+#pragma mark -
 
 /*
- Helper NSDictionary Category
+ * Helper methods
  */
-@interface NSDictionary(KVCMappingHelper)
-// Reverse key search
-- (NSString*) wantedKeyForRealKey:(NSString*)realKey;
+@interface NSString (KVCMappingKeysHelperMethods)
+
+// Formats a transformer key, <transformer>:<key>.
+//
+- (NSString*) usingKVCValueTransformerNamed:(NSString*)valueTransformerName;
 @end

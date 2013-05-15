@@ -8,7 +8,6 @@
 #import <SenTestingKit/SenTestingKit.h>
 #import "NSObject+KVCMapping.h"
 
-/******************************************************************************/
 #pragma mark Forward Declarations
 
 @interface UppercaseTransformer : NSValueTransformer
@@ -16,7 +15,6 @@
 @interface LowercaseTransformer : NSValueTransformer
 @end
 
-/******************************************************************************/
 #pragma mark Test class
 
 @interface TestClass : NSObject
@@ -76,7 +74,7 @@
     TestClass * test = [TestClass new];
 
     [test setValue:@"testValue" forKey:@"usedProperty" withMappingDictionary:
-     @{@"usedProperty": @"uppercase:actualProperty1"}];
+     @{@"usedProperty": [@"actualProperty1" usingKVCValueTransformerNamed:@"uppercase"]}];
 
     STAssertEqualObjects([test valueForKey:@"actualProperty1"], @"TESTVALUE", nil);
 }
@@ -96,7 +94,6 @@
 
 @end
 
-/******************************************************************************/
 #pragma mark -
 
 @implementation UppercaseTransformer

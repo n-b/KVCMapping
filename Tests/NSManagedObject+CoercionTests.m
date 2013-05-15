@@ -8,7 +8,6 @@
 #import <SenTestingKit/SenTestingKit.h>
 #import "NSManagedObject+Coercion.h"
 
-/******************************************************************************/
 #pragma mark Coercion Tests
 
 @interface NSManagedObject_KVCMappingCoercion_Tests : SenTestCase

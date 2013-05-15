@@ -44,20 +44,20 @@
     STAssertEqualObjects([a valueForKey:@"relationToB"], b, nil);
 }
 
-- (void) testSetWithDictionary
+- (void) testSetRelationshipWithDictionary
 {
     NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
     NSManagedObject * b = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityB" inManagedObjectContext:moc];
     
     [a setValue:@"value1" forKey:@"attributeInA"];
 
-    [b setRelationshipsWithDictionary:@{@"a" : @"value1"} withMappingDictionary:@{@"a" : @"relationToA:attributeInA"} createObjects:NO];
+    [b setRelationshipsWithDictionary:@{@"a" : @"value1"} withMappingDictionary:@{@"a" : [@"relationToA" usingKVCKeyInDestinationEntity:@"attributeInA"]} createObjects:NO];
     
     STAssertEqualObjects([b valueForKey:@"relationToA"], a, nil);
     STAssertEqualObjects([a valueForKey:@"relationToB"], b, nil);
 }
 
-- (void) testSetWithCoercion
+- (void) testSetRelationshipWithCoercion
 {
     NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
     NSManagedObject * b = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityB" inManagedObjectContext:moc];
@@ -91,6 +91,50 @@
     STAssertNotNil(b, nil);
     STAssertEqualObjects([b valueForKey:@"relationToA"], a, nil);
     STAssertEqualObjects([a valueForKey:@"relationToB"], b, nil);
+}
+
+- (void) testSetRelationshipWithCache
+{
+    NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
+    NSManagedObject * b = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityB" inManagedObjectContext:moc];
+    [a setValue:@"value1" forKey:@"attributeInA"];
+    
+    KVCEntitiesCache * cache = [[KVCEntitiesCache alloc] initWithEntities:@[[NSEntityDescription entityForName:@"TestRelatedEntityA"
+                                                                                        inManagedObjectContext:moc]]
+                                     inContext:moc onKey:@"attributeInA"];
+    
+    [b setRelationship:@"relationToA" withObjectWithValue:@"value1" forKey:@"attributeInA" createObject:NO entitiesCache:cache];
+    
+    STAssertEqualObjects([b valueForKey:@"relationToA"], a, nil);
+}
+
+- (void) testSetRelationshipWithCacheMissAndCreateObject
+{
+    NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
+
+    KVCEntitiesCache * cache = [[KVCEntitiesCache alloc] initWithEntities:@[[NSEntityDescription entityForName:@"TestRelatedEntityB"
+                                                                                        inManagedObjectContext:moc]]
+                                                                inContext:moc onKey:@"attributeInA"];
+
+    NSManagedObject * b =  [a setRelationship:@"relationToB" withObjectWithValue:@"value1" forKey:@"attributeInB" createObject:YES entitiesCache:cache];
+    
+    STAssertNotNil(b, nil);
+    STAssertEqualObjects([a valueForKey:@"relationToB"], b, nil);
+    STAssertEqualObjects(cache[@"TestRelatedEntityB"][@"value1"], b, nil);
+}
+
+- (void) testSetRelationshipToMissingEntity
+{
+    NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
+    NSManagedObject * b = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityB" inManagedObjectContext:moc];
+    [a setValue:@"value1" forKey:@"attributeInA"];
+    [b setValue:@"value1" forKey:@"attributeInB"];
+    KVCEntitiesCache * cache = [[KVCEntitiesCache alloc] initWithEntities:@[[NSEntityDescription entityForName:@"TestRelatedEntityA"
+                                                                                        inManagedObjectContext:moc]]
+                                                                inContext:moc onKey:@"attributeInA"];
+    // Entity B is not in the cache, just ignore it in the relationship.
+    NSManagedObject * b2 = [a setRelationship:@"relationToB" withObjectWithValue:@"value1" forKey:@"attributeInB" createObject:YES entitiesCache:cache];
+    STAssertNil(b2, nil);
 }
 
 @end

@@ -9,10 +9,14 @@
 #import "NSObject+KVCMapping.h"
 #import "NSManagedObject+Coercion.h"
 
-/******************************************************************************/
 #pragma mark Helper Methods
 
 @implementation NSString (KVCMappingKeysHelperMethods)
+
+- (NSString*) usingKVCValueTransformerNamed:(NSString*)valueTransformerName
+{
+    return [NSString stringWithFormat:@"%@:%@", valueTransformerName, self];
+}
 
 - (NSValueTransformer*) kvcExtractValueTransformer:(NSString**)realKey
 {
@@ -31,7 +35,6 @@
 
 @end
 
-/******************************************************************************/
 #pragma mark NSObject
 
 #define DEBUG_KV_MAPPING 0
@@ -136,26 +139,4 @@
     [self setValue:coercedValue forKey:realKey];
 }
 
-@end
-
-@implementation NSDictionary(KVCMappingHelper)
-- (NSString*) wantedKeyForRealKey:(NSString*)searchedRealKey
-{
-    for (NSString * wantedKey in self) {
-        id realKeys = self[wantedKey];
-        
-        // realKeys might be an NSArray of NSStrings, or a single NSString.
-        // Convert it to an NSArray.
-        if([realKeys isKindOfClass:[NSString class]])
-            realKeys = @[realKeys];
-        
-        for (__strong NSString * realKey in realKeys)
-        {
-            [realKey kvcExtractValueTransformer:&realKey];
-            if([realKey isEqualToString:searchedRealKey])
-                return wantedKey;
-        }
-    }
-    return nil;
-}
 @end
