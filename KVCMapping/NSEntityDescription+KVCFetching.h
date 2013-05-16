@@ -39,7 +39,3 @@
 + (instancetype) kvc_fetchObjectInContext:(NSManagedObjectContext*)moc withValue:(id)value forKey:(NSString*)key options:(NSDictionary*)options;
 @end
 
-
-// options keys
-extern NSString* const KVCCreateObjectOption;  // A NSNumber (bool)
-extern NSString* const KVCEntitiesCacheOption; // A KVCEntitiesCache

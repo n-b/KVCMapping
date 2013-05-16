@@ -9,6 +9,7 @@
 #import "NSManagedObject+KVCRelationship.h"
 #import "NSEntityDescription+KVCFetching.h"
 #import "NSObject+KVCMapping.h"
+#import "KVCMappingOptions.h"
 
 #pragma mark Utility
 
@@ -68,6 +69,44 @@
     // Make up an entity mapping
     KVCEntityMapping * mapping = [[KVCEntityMapping alloc] initWithMappingDictionary:nil primaryKey:key entityName:nil];
     [self kvc_setRelationship:relationshipName with:objectValues withMapping:mapping options:options];
+}
+
+
+- (id) kvc_relationshipValues:(NSString*)relationshipName forKey:(NSString*)key options:(NSDictionary*)options
+{
+    NSRelationshipDescription * relationshipDesc = [[self entity] relationshipsByName][relationshipName];
+    id valueOrValues = [self valueForKey:relationshipName];
+    if(relationshipDesc.maxCount==1) {
+        return [valueOrValues valueForKey:key];
+    } else {
+        if ([options[KVCIncludeToManyRelationshipsOption] boolValue]) {
+            if([valueOrValues respondsToSelector:@selector(allObjects)]) {
+                return [[valueOrValues allObjects] valueForKey:key];
+            } else if([valueOrValues respondsToSelector:@selector(array)]) {
+                return [[valueOrValues array] valueForKey:key];
+            }
+        }
+        return nil;
+    }
+}
+
+- (id) kvc_relationshipValues:(NSString*)relationshipName withMapping:(KVCEntityMapping*)mapping options:(NSDictionary*)options
+{
+    if ([options[KVCIncludeSubobjectsOption] boolValue]) {
+        NSRelationshipDescription * relationshipDesc = [[self entity] relationshipsByName][relationshipName];
+        
+        id objects = [self valueForKey:relationshipName];
+        if(relationshipDesc.maxCount==1) {
+            return [objects kvc_valuesWithEntityMapping:mapping options:options];
+        } else {
+            NSMutableArray * result = [NSMutableArray new];
+            for (id object in objects) {
+                [result addObject:[object kvc_valuesWithEntityMapping:mapping options:options]];
+            }
+            return [NSArray arrayWithArray:result];
+        }
+    }
+    return nil;
 }
 
 @end

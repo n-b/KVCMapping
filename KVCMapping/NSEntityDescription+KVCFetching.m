@@ -10,10 +10,7 @@
 #import "KVCEntitiesCache.h"
 #import "NSAttributeDescription+Coercion.h"
 #import "NSObject+KVCMapping.h"
-
-NSString* const KVCCreateObjectOption = @"KVCCreateObjectOption";
-NSString* const KVCEntitiesCacheOption = @"KVCEntitiesCacheOption";
-
+#import "KVCMappingOptions.h"
 
 @implementation NSEntityDescription (KVCFetching)
 
@@ -85,7 +82,7 @@ NSString* const KVCEntitiesCacheOption = @"KVCEntitiesCacheOption";
 
     id object;
     if(entityMapping.primaryKey) {
-        id primaryValue = [entityMapping kvc_extractValueForProperty:entityMapping.primaryKey fromValues:values];
+        id primaryValue = [entityMapping extractValueFor:entityMapping.primaryKey fromValues:values];
         object = [self kvc_fetchObjectInContext:moc withValue:primaryValue forKey:entityMapping.primaryKey options:options];
     } else {
         // Alway create subobjects with no primarykey

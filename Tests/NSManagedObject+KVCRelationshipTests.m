@@ -165,6 +165,37 @@
     STAssertEqualObjects([a valueForKey:@"relationToB"], b, nil);
 }
 
+- (void) testGetReverseRelationshipWithDictionary
+{
+    NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
+    NSManagedObject * b = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityB" inManagedObjectContext:moc];
+    
+    [a setValue:@"value1" forKey:@"attributeInA"];
+    [b setValue:a forKey:@"relationToA"];
+    
+    id values = [b kvc_valuesWithMappingDictionary:@{@"a": @"relationToA.attributeInA"} options:nil];
+    
+    STAssertEqualObjects(values, @{@"a": @"value1"}, nil);
+}
+
+- (void) testGetReverseRelationshipWithDictionaryToMany
+{
+    NSManagedObject * a1 = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
+    NSManagedObject * a2 = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
+    NSManagedObject * b = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityB" inManagedObjectContext:moc];
+    
+    [a1 setValue:@"value1" forKey:@"attributeInA"];
+    [a2 setValue:@"value2" forKey:@"attributeInA"];
+    [b setValue:[NSSet setWithArray:@[a1, a2 ]] forKey:@"relationToManyAs"];
+
+    // To many relationships are ignored by default
+    id values = [b kvc_valuesWithMappingDictionary:@{@"a": @"relationToManyAs.attributeInA"} options:nil];
+    STAssertEqualObjects(values, @{}, nil);
+    
+    values = [b kvc_valuesWithMappingDictionary:@{@"a": @"relationToManyAs.attributeInA"} options:@{KVCIncludeToManyRelationshipsOption: @YES}];
+    STAssertEqualObjects([NSSet setWithArray:[values valueForKey:@"a"]], [NSSet setWithArray:(@[@"value1", @"value2"])], nil);
+}
+
 - (void) testSetRelationshipWithSubobjectMapping
 {
     NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
@@ -180,7 +211,23 @@
     STAssertEqualObjects([b valueForKey:@"attributeInB"], @"VALUE", nil);
 }
 
-- (void) testSetRelationshipWithSubobjectsMapping
+- (void) testSetRelationshipWithManySubobjectMapping
+{
+    NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
+    
+    id mappingDictionary = @{ @"b" : @{ @"relationToManyBs" : @{@"attr": @"attributeInB" }}};
+    
+    id values = @{@"b": @[@{@"attr":@"VALUE_1"},@{@"attr":@"VALUE_2"}]};
+    
+    [a kvc_setValues:values withMappingDictionary:mappingDictionary options:nil];
+    
+    NSSet * b = [a valueForKey:@"relationToManyBs"];
+    
+    STAssertEquals([b count], (NSUInteger)2, nil);
+    STAssertEqualObjects([b valueForKey:@"attributeInB"], ([NSSet setWithArray:@[@"VALUE_1", @"VALUE_2" ]]), nil);
+}
+
+- (void) testSetRelationshipWithExistingSubobjectMapping
 {
     NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
     NSManagedObject * b = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityB" inManagedObjectContext:moc];
@@ -195,6 +242,42 @@
     NSManagedObject * newb = [a valueForKey:@"relationToB"];
 
     STAssertEquals(b, newb, nil);
+}
+
+- (void) testGetReverseRelationshipWithSubobjectMapping
+{
+    NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
+    NSManagedObject * b = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityB" inManagedObjectContext:moc];
+    [b setValue:@"VALUE" forKey:@"attributeInB"];
+    [a setValue:b forKey:@"relationToB"];
+    
+    id mappingDictionary = @{ @"b" : @{ @"relationToB" : @{@"attr": @"attributeInB" }}};
+    
+    // Subobjects are ignored by default
+    id values = [a kvc_valuesWithMappingDictionary:mappingDictionary options:nil];
+    STAssertEqualObjects(values, @{}, nil);
+    
+    values = [a kvc_valuesWithMappingDictionary:mappingDictionary options:@{KVCIncludeSubobjectsOption: @YES}];
+    STAssertEqualObjects(values, @{@"b": @{@"attr":@"VALUE"}}, nil);
+}
+
+- (void) testGetReverseRelationshipWithManySubobjectsMapping
+{
+    NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
+    NSManagedObject * b1 = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityB" inManagedObjectContext:moc];
+    NSManagedObject * b2 = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityB" inManagedObjectContext:moc];
+    [b1 setValue:@"VALUE_1" forKey:@"attributeInB"];
+    [b2 setValue:@"VALUE_2" forKey:@"attributeInB"];
+    [a setValue:[NSSet setWithArray:@[b1, b2]] forKey:@"relationToManyBs"];
+    
+    id mappingDictionary = @{ @"b" : @{ @"relationToManyBs" : @{@"attr": @"attributeInB" }}};
+    
+    // Subobjects are ignored by default
+    id values = [a kvc_valuesWithMappingDictionary:mappingDictionary options:nil];
+    STAssertEqualObjects(values, @{}, nil);
+
+    values = [a kvc_valuesWithMappingDictionary:mappingDictionary options:@{KVCIncludeSubobjectsOption: @YES}];
+    STAssertEqualObjects([NSSet setWithArray:[values valueForKey:@"b"]], [NSSet setWithArray:(@[@{@"attr":@"VALUE_1"}, @{@"attr":@"VALUE_2"}])], nil);
 }
 
 @end

@@ -57,7 +57,7 @@
     _primaryKey = primaryKey_;
     _entityName = entityName_;
     if(_primaryKey) {
-        NSParameterAssert([self keyMappedTo:_primaryKey mapping:NULL]!=nil);
+        NSParameterAssert([[self mappingsTo:_primaryKey] count]>0);
     }
     return self;
 }
@@ -69,35 +69,45 @@
     }]];
 }
 
-- (id)keyMappedTo:(NSString*)property mapping:(KVCPropertyMapping**)mapping
+- (NSArray*) allKeys
 {
-    for (KVCKeyMapping * keyMapping in self.keyMappings) {
-        if([keyMapping isKindOfClass:[KVCPropertyMapping class]] &&
-           [((KVCPropertyMapping*)keyMapping).property isEqualToString:property]) {
-            if(mapping) {
-                *mapping = (KVCPropertyMapping*)keyMapping;
-            }
-            return keyMapping.key;
-        }
-    }
-    return nil;
+    return [self.keyMappings valueForKey:@"key"];
 }
 
-- (id) kvc_extractValueForProperty:(id)property fromValues:(id)values
+- (NSArray*)mappingsTo:(NSString*)propertyOrRelationship
 {
-    KVCPropertyMapping * propertyMapping;
-    id key = [self keyMappedTo:property mapping:&propertyMapping];
-    id value;
-    if([values isKindOfClass:[NSDictionary class]]) {
-        value = values[key];
-    } else if ([values isKindOfClass:[NSArray class]]) {
-        value = values[[key unsignedIntegerValue]];
+    NSMutableArray * mappings = [NSMutableArray new];
+    for (id keyMapping in self.keyMappings) {
+        if( ([keyMapping respondsToSelector:@selector(property)] &&
+             [[keyMapping property] isEqualToString:propertyOrRelationship] )
+           || ([keyMapping respondsToSelector:@selector(relationship)] &&
+               [[keyMapping relationship] isEqualToString:propertyOrRelationship] ) )
+        {
+            [mappings addObject:keyMapping];
+        }
     }
-    
-    if(propertyMapping.transformer) {
-        value = [propertyMapping.transformer transformedValue:value];
+    return [NSArray arrayWithArray:mappings];
+}
+
+- (id) extractValueFor:(id)propertyOrRelationship fromValues:(id)values
+{
+    NSArray * mappings = [self mappingsTo:propertyOrRelationship];
+    if([mappings count]==0) {
+        return nil;
+    } else {
+        id keyMapping = mappings[0];
+        id key = [keyMapping key];
+        id value;
+        if([values isKindOfClass:[NSDictionary class]]) {
+            value = values[key];
+        } else if ([values isKindOfClass:[NSArray class]]) {
+            value = values[[key unsignedIntegerValue]];
+        }
+        if([keyMapping respondsToSelector:@selector(transformer)] && [keyMapping transformer]) {
+            value = [[keyMapping transformer] transformedValue:value];
+        }
+        return value;
     }
-    return value;
 }
 
 @end
@@ -237,9 +247,9 @@ NSString * const KVCMapPrimaryKeySeparator = @".";
 {
     self = [super initWithKey:key_];
     NSArray * components = [mappingString componentsSeparatedByString:KVCMapPrimaryKeySeparator];
+    NSParameterAssert([components count]==2);
     _relationship = components[0];
-    if([components count]==2)
-        _foreignKey = components[1];
+    _foreignKey = components[1];
     return self;
 }
 @end
@@ -265,6 +275,10 @@ NSString * const KVCMapPrimaryKeySeparator = @".";
 - (void) assignValue:(id)value toObject:(id)object options:(NSDictionary*)options {
     [self doesNotRecognizeSelector:_cmd];
 }
+- (id) valueFromObject:(id)object options:(NSDictionary*)options {
+    [self doesNotRecognizeSelector:_cmd];
+    return nil;
+}
 @end
 
 @implementation KVCPropertyMapping (KVCAssignValue)
@@ -285,6 +299,19 @@ NSString * const KVCMapPrimaryKeySeparator = @".";
     
     [object setValue:value forKey:self.property];
 }
+- (id) valueFromObject:(id)object options:(NSDictionary*)options
+{
+    id value = [object valueForKey:self.property];
+    
+    if(self.transformer) {
+        if([[self.transformer class] allowsReverseTransformation]) {
+            return [self.transformer reverseTransformedValue:value];
+        } else {
+            return nil;
+        }
+    }
+    return value;
+}
 @end
 
 @implementation KVCRelationshipMapping (KVCAssignValue)
@@ -292,12 +319,20 @@ NSString * const KVCMapPrimaryKeySeparator = @".";
 {
     [object kvc_setRelationship:self.relationship withObjectsWithValues:value forKey:self.foreignKey options:options];
 }
+- (id) valueFromObject:(id)object options:(NSDictionary*)options
+{
+    return [object kvc_relationshipValues:self.relationship forKey:self.foreignKey options:options];
+}
 @end
 
 @implementation KVCSubobjectMapping (KVCAssignValue)
 - (void) assignValue:(id)value toObject:(id)object options:(NSDictionary*)options
 {
     [object kvc_setRelationship:self.relationship with:value withMapping:self.mapping options:options];
+}
+- (id) valueFromObject:(id)object options:(NSDictionary*)options
+{
+    return [object kvc_relationshipValues:self.relationship withMapping:self.mapping options:options];
 }
 @end
 

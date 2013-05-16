@@ -41,4 +41,11 @@
 // valueOrValues should be either a single value (NSString, NSNumber...) for `key` or a collection of values for `key`.
 - (void) kvc_setRelationship:(NSString*)relationshipName withObjectsWithValues:(id)valueOrValues forKey:(NSString*)key options:(NSDictionary*)options;
 
+
+// Perform reverse mapping, using `mapping`, of the remote object(s) of the relationship.
+- (id) kvc_relationshipValues:(NSString*)relationshipName withMapping:(KVCEntityMapping*)mapping options:(NSDictionary*)options;
+
+// Obtain the value, or values for the passed key of the remote object of the relationship.
+- (id) kvc_relationshipValues:(NSString*)relationshipName forKey:(NSString*)key options:(NSDictionary*)options;
+
 @end

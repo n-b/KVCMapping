@@ -11,8 +11,8 @@
 
 @interface NSObject (KVCMapping)
 
-// setValue:forKey:withEntityMapping:options:
-//
+#pragma mark - Forward Mapping
+
 // Set a `value` for a given `wantedKey` of the receiver, using the `entityMapping` to map the value to a real key.
 // * a single `wantedKey` may map to several actual properties or relationships in the receiver. (See KVCKeyMapping)
 // * `wantedKey` can be an NSString or an NSNumber. (See KVCEntityMapping)
@@ -37,5 +37,24 @@
 // Automatically create a KVCEntityMapping with `kvcMappingDictionary`
 - (void) kvc_setValue:(id)value forKey:(NSString*)wantedKey withMappingDictionary:(NSDictionary*)kvcMappingDictionary options:(NSDictionary*)options;
 - (void) kvc_setValues:(id)values withMappingDictionary:(NSDictionary*)kvcMappingDictionary options:(NSDictionary*)options;
+
+#pragma mark - Reverse Mapping
+
+// obtain the value
+//
+// If there are several mappings for this key, only the first one is used.
+// KVCPropertyMappings using transformers must allow reverse transformations.
+// Otherwise, the returned value is nil.
+- (id) kvc_valueForKey:(id)key withEntityMapping:(KVCEntityMapping*)entityMapping options:(NSDictionary*)options;
+
+// Batch Method.
+// Calls - kvc_valueForKey:withEntityMapping: repeatedly for each key in the mapping
+- (id) kvc_valuesWithEntityMapping:(KVCEntityMapping*)entityMapping options:(NSDictionary*)options;
+
+// Convenience variants:
+// Automatically create a KVCEntityMapping with `kvcMappingDictionary`
+- (id) kvc_valueForKey:(id)key withMappingDictionary:(NSDictionary*)mappingDictionary options:(NSDictionary*)options;
+- (id) kvc_valuesWithMappingDictionary:(NSDictionary*)mappingDictionary options:(NSDictionary*)options;
+
 @end
 

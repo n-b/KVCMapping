@@ -6,8 +6,7 @@
 //  Copyright (c) 2011 Nicolas Bouilleaud. All rights reserved.
 //
 #import <SenTestingKit/SenTestingKit.h>
-#import "NSEntityDescription+KVCFetching.h"
-#import "KVCEntitiesCache.h"
+#import "KVCMapping.h"
 
 /****************************************************************************/
 #pragma mark Entity Class

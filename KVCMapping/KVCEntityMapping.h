@@ -33,17 +33,18 @@
 // or an NSNumber (if the external object representation is an NSArray).
 - (NSArray*)mappingsForKey:(id)key;
 
+// All keys in mapping
+- (NSArray*) allKeys;
 
 // The Primary Key for the Entity in the external representation.
 // used in KVCRelationshipMapping, when
 @property (readonly) id primaryKey;
 
-// Reverse mapping : return the external representation key for a given property.
-// `property` is the property of a KVCPropertyMapping.
-- (id) keyMappedTo:(NSString*)property mapping:(KVCPropertyMapping**)mapping;
+// Reverse mapping : return the external mappings for a given property or relationship.
+- (NSArray*)mappingsTo:(NSString*)propertyOrRelationship;
 
 // Value Extraction/Conversion
-- (id) kvc_extractValueForProperty:(id)property fromValues:(id)values;
+- (id) extractValueFor:(id)property fromValues:(id)values;
 
 @end
 
@@ -199,4 +200,8 @@
 // Interpret the value and set it to the object, depending of the receiver's settings.
 // Base implementation does nothing.
 - (void) assignValue:(id)value toObject:(id)object options:(NSDictionary*)options;
+
+// Obtain the external value from the object for this mapping.
+// Base implementation does nothing.
+- (id) valueFromObject:(id)object options:(NSDictionary*)options;
 @end

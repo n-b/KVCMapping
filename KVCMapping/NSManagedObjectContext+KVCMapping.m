@@ -42,8 +42,7 @@
                     withEntityMapping:(KVCEntityMapping*)entityMapping
                               options:(NSDictionary*)options
 {
-    // All the objects returned by the CT server have an "id" field, mapped to the "identifier" property in CoreData
-    id primaryValue = [entityMapping kvc_extractValueForProperty:entityMapping.primaryKey fromValues:values];
+    id primaryValue = [entityMapping extractValueFor:entityMapping.primaryKey fromValues:values];
     NSEntityDescription * entityDescription = [self.persistentStoreCoordinator.managedObjectModel entitiesByName][entityMapping.entityName];
     id object = [entityDescription kvc_fetchObjectInContext:self withValue:primaryValue forKey:entityMapping.primaryKey options:options];
     [object kvc_setValues:values withEntityMapping:entityMapping options:options];

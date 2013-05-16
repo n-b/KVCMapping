@@ -78,6 +78,10 @@
         NSString * realKey = _mapping[wantedKey];
         STAssertEqualObjects([test valueForKey:realKey], value, nil);
     }
+    // reverse
+    id values = [test kvc_valuesWithMappingDictionary:_mapping options:nil];
+    
+    STAssertEqualObjects(values, _goodDataset, nil);
 }
 
 - (void) testAutomaticCoercionDataset
@@ -92,6 +96,11 @@
         NSString * realKey = _mapping[wantedKey];
         STAssertEqualObjects([test valueForKey:realKey], value, nil);
     }
+
+    // reverse
+    id values = [test kvc_valuesWithMappingDictionary:_mapping options:nil];
+    
+    STAssertEqualObjects(values, _goodDataset, nil);
 }
 
 @end
