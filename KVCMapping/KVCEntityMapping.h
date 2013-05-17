@@ -17,6 +17,7 @@
 @interface KVCModelMapping : NSObject
 - (KVCEntityMapping*) entityMappingForKey:(id)key;
 - (KVCEntityMapping*) entityMappingForEntityName:(NSString*)entityName;
+- (NSArray*) keysForEntityName:(NSString*)entityName;
 @end
 
 #pragma mark - KVCEntityMapping

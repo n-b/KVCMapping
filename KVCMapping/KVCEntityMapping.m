@@ -44,6 +44,17 @@
     return nil;
 }
 
+- (NSArray*) keysForEntityName:(NSString*)entityName
+{
+    NSMutableArray * keys = [NSMutableArray new];
+    for (NSString * key in self.entityMappings) {
+        if ([[self.entityMappings[key] entityName] isEqualToString:entityName]) {
+            [keys addObject:key];
+        }
+    }
+    return [NSArray arrayWithArray:keys];
+}
+
 @end
 /****************************************************************************/
 #pragma mark - KVCEntityMapping
