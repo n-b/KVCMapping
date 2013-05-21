@@ -146,10 +146,10 @@
                                 @[[[KVCInstancesCache alloc] initWithContext:moc
                                                                   entityName:@"TestRelatedEntityA"
                                                                   primaryKey:@"attributeInA"]]];
-    // Entity B is not in the cache, just ignore it in the relationship.
+    // Entity B is not in the cache, but will be fetched regularly
     [a kvc_setRelationship:@"relationToB" withObjectsWithValues:@"value1" forKey:@"attributeInB" options:@{KVCCreateObjectOption: @YES, KVCEntitiesCacheOption: cache}];
     NSManagedObject * b2 = [a valueForKey:@"relationToB"];
-    STAssertNil(b2, nil);
+    STAssertEqualObjects(b, b2, nil);
 }
 
 - (void) testSetRelationshipWithDictionary

@@ -40,11 +40,10 @@
     NSManagedObject * obj;
     KVCEntitiesCache * entitiesCache = options[KVCEntitiesCacheOption];
     KVCInstancesCache * instancesCache = entitiesCache[self.name];
-    if(entitiesCache) {
-        // If cache is used but there is no instance cache for this specific entity, return nil.
-        if(instancesCache==nil) {
-            return nil;
-        }
+    // Use cache if available
+    // If we have an entitiesCache but no instances Cache for this specific entity,
+    // fallback to regular fetch.
+    if(entitiesCache && instancesCache!=nil) {
         obj = instancesCache[correctValue];
     } else {
         // Regular fetch
