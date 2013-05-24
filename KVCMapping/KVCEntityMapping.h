@@ -41,11 +41,19 @@
 // used in KVCRelationshipMapping, when
 @property (readonly) id primaryKey;
 
-// Reverse mapping : return the external mappings for a given property or relationship.
+// Reverse mapping
+
+// Return the external mappings for a given property or relationship.
 - (NSArray*)mappingsTo:(NSString*)propertyOrRelationship;
 
-// Value Extraction/Conversion
-- (id) extractValueFor:(id)property fromValues:(id)values;
+// Given the name of a property or relationship, extract the associated value from a collection of `values`.
+//
+// The collection of `values` is usually a dictionary, but can also be an array. In this case, the key
+// in the mapping is expected to be an NSNumber that provides the index of the value in the `values` array.
+//
+// If the mapping associated to the property defines a value transformer, the returned value
+// will be converted using this transformer.
+- (id) extractValueFor:(id)propertyOrRelationship fromValues:(id)values;
 
 @end
 

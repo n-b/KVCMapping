@@ -17,6 +17,9 @@
 // An Entities Cache is built before a large Fetch/Set/Set operation, like a parsing.
 // It will then be used instead of actual accesses to the CoreData database.
 //
+// This can provide a significant speedup of operations involving a large number of fetches: as all
+// objects are prefetched in a single pass at the beginning, all subsequent access to objects are
+// basically free.
 
 // A collection of Instance Caches
 @interface KVCEntitiesCache : NSObject

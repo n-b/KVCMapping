@@ -27,7 +27,7 @@
 //
 // `objectsValues` is a dictionary whoses keys match the keys in modelMapping.
 //
-// return a debug help dictionary containing the imported values for each created/updated managedObjectID.
+// Return a debug help dictionary containing the imported values for each created/updated managedObjectID.
 - (NSDictionary*) kvc_importObjects:(NSDictionary *)objectsValues
                    withModelMapping:(KVCModelMapping *)modelMapping
                             options:(NSDictionary *)options;

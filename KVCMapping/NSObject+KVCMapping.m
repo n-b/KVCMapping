@@ -32,7 +32,7 @@
 
 - (void) kvc_setValue:(id)value forKey:(id)wantedKey withEntityMapping:(KVCEntityMapping*)entityMapping options:(NSDictionary*)options
 {
-    // Find the mappings to use for this key.
+    // Find the mappings to use for this key (as a source key can be mapped to several destination properties).
     NSArray* keyMappings = [entityMapping mappingsForKey:wantedKey];
     
     for (KVCKeyMapping * keyMapping in keyMappings){
