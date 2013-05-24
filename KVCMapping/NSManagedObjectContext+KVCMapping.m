@@ -12,9 +12,24 @@
 
 @implementation NSManagedObjectContext (KVCMapping)
 
+- (NSManagedObject *) kvc_importObject:(NSDictionary*)values
+                    withEntityMapping:(KVCEntityMapping*)entityMapping
+                              options:(NSDictionary*)options
+{
+    id primaryValue = [entityMapping extractValueFor:entityMapping.primaryKey fromValues:values];
+    NSEntityDescription * entityDescription = [self.persistentStoreCoordinator.managedObjectModel entitiesByName][entityMapping.entityName];
+    
+    // Retrieve the object using the value of its primary key.
+    // If the object cannot be found and KVCCreateObjectOption is specified, a new managed object is created.
+    id object = [entityDescription kvc_fetchObjectInContext:self withValue:primaryValue forKey:entityMapping.primaryKey options:options];
+    
+    [object kvc_setValues:values withEntityMapping:entityMapping options:options];
+    return object;
+}
+
 - (NSDictionary*) kvc_importObjects:(NSDictionary *)objectsValues
-                  withModelMapping:(KVCModelMapping *)modelMapping
-                           options:(NSDictionary *)options
+                   withModelMapping:(KVCModelMapping *)modelMapping
+                            options:(NSDictionary *)options
 {
     NSMutableDictionary *parsedObjectsInfo = [NSMutableDictionary new];
     
@@ -38,15 +53,5 @@
     return [NSDictionary dictionaryWithDictionary:parsedObjectsInfo];
 }
 
-- (NSManagedObject *) kvc_importObject:(NSDictionary*)values
-                    withEntityMapping:(KVCEntityMapping*)entityMapping
-                              options:(NSDictionary*)options
-{
-    id primaryValue = [entityMapping extractValueFor:entityMapping.primaryKey fromValues:values];
-    NSEntityDescription * entityDescription = [self.persistentStoreCoordinator.managedObjectModel entitiesByName][entityMapping.entityName];
-    id object = [entityDescription kvc_fetchObjectInContext:self withValue:primaryValue forKey:entityMapping.primaryKey options:options];
-    [object kvc_setValues:values withEntityMapping:entityMapping options:options];
-    return object;
-}
 @end
 
