@@ -13,6 +13,16 @@
 //
 @interface NSManagedObject (KVCRelationship)
 
+// Convenience method:
+// Only Fetch objects with `valueOrValues` for `key`.
+// `key` is a primary key in the destination entity of the relationship.
+// valueOrValues should be either a single value (NSString, NSNumber...) for `key` or a collection of values for `key`.
+- (void) kvc_setRelationship:(NSString*)relationshipName toObjectWithValue:(id)value
+                      forKey:(NSString*)key options:(NSDictionary*)options;
+- (void) kvc_setRelationship:(NSString*)relationshipName toObjectsWithValueIn:(id)valueCollection
+                      forKey:(NSString*)key options:(NSDictionary*)options;
+
+
 // Fetch and assign object(s) for the other end of a relationship.
 //
 // * Get information about the named relationship on the receiver's entity
@@ -32,14 +42,11 @@
 // If no primaryKey is specified, new objects are created.
 //
 // Once the objects are fetched/created, values are set using kvc_setValues:withEntityMapping:options:.
-- (void) kvc_setRelationship:(NSString*)relationshipName with:(id)valueOrValues withMapping:(KVCEntityMapping*)entityMapping options:(NSDictionary*)options;
+- (void) kvc_setRelationship:(NSString*)relationshipName toSubobjectFromValues:(id)values
+                usingMapping:(KVCEntityMapping*)entityMapping options:(NSDictionary*)options;
+- (void) kvc_setRelationship:(NSString*)relationshipName toSubobjectsFromValuesCollection:(id)valuesCollection
+                usingMapping:(KVCEntityMapping*)entityMapping options:(NSDictionary*)options;
 
-
-// Convenience method:
-// Only Fetch objects with `valueOrValues` for `key`.
-// `key` is a primary key in the destination entity of the relationship.
-// valueOrValues should be either a single value (NSString, NSNumber...) for `key` or a collection of values for `key`.
-- (void) kvc_setRelationship:(NSString*)relationshipName withObjectsWithValues:(id)valueOrValues forKey:(NSString*)key options:(NSDictionary*)options;
 
 
 // Perform reverse mapping, using `mapping`, of the remote object(s) of the relationship.

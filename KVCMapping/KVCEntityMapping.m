@@ -9,6 +9,7 @@
 #import "KVCEntityMapping.h"
 #import "NSAttributeDescription+Coercion.h"
 #import "NSManagedObject+KVCRelationship.h"
+#import "NSObject+KVCCollection.h"
 
 #pragma mark - Private Methods
 
@@ -328,7 +329,13 @@ NSString * const KVCMapPrimaryKeySeparator = @".";
 @implementation KVCRelationshipMapping (KVCAssignValue)
 - (void) assignValue:(id)value toObject:(id)object options:(NSDictionary*)options
 {
-    [object kvc_setRelationship:self.relationship withObjectsWithValues:value forKey:self.foreignKey options:options];
+    NSRelationshipDescription * relationshipDesc = [[object entity] relationshipsByName][self.relationship];
+    if(!relationshipDesc.isToMany) {
+        [object kvc_setRelationship:self.relationship toObjectWithValue:value forKey:self.foreignKey options:options];
+    } else {
+        value =  [value kvc_embedInCollectionIfNeeded];
+        [object kvc_setRelationship:self.relationship toObjectsWithValueIn:value forKey:self.foreignKey options:options];
+    }
 }
 - (id) valueFromObject:(id)object options:(NSDictionary*)options
 {
@@ -339,7 +346,13 @@ NSString * const KVCMapPrimaryKeySeparator = @".";
 @implementation KVCSubobjectMapping (KVCAssignValue)
 - (void) assignValue:(id)value toObject:(id)object options:(NSDictionary*)options
 {
-    [object kvc_setRelationship:self.relationship with:value withMapping:self.mapping options:options];
+    NSRelationshipDescription * relationshipDesc = [[object entity] relationshipsByName][self.relationship];
+    if(!relationshipDesc.isToMany) {
+        [object kvc_setRelationship:self.relationship toSubobjectFromValues:value usingMapping:self.mapping options:options];
+    } else {
+        value =  [value kvc_embedInCollectionIfNeeded];
+        [object kvc_setRelationship:self.relationship toSubobjectsFromValuesCollection:value usingMapping:self.mapping options:options];
+    }
 }
 - (id) valueFromObject:(id)object options:(NSDictionary*)options
 {

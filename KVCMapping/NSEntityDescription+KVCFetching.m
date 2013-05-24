@@ -76,22 +76,6 @@
     return obj;
 }
 
-- (id) kvc_fetchObjectInContext:(NSManagedObjectContext*)moc withValues:(id)values withMappingDictionary:(KVCEntityMapping*)entityMapping options:(NSDictionary*)options
-{
-
-    id object;
-    if(entityMapping.primaryKey) {
-        id primaryValue = [entityMapping extractValueFor:entityMapping.primaryKey fromValues:values];
-        object = [self kvc_fetchObjectInContext:moc withValue:primaryValue forKey:entityMapping.primaryKey options:options];
-    } else {
-        // Alway create subobjects with no primarykey
-        object = [[self class] insertNewObjectForEntityForName:self.name inManagedObjectContext:moc];
-    }
-    // set other values
-    [object kvc_setValues:values withEntityMapping:entityMapping options:options];
-    return object;
-}
-
 @end
 
 #pragma mark - 

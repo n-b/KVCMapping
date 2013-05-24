@@ -19,11 +19,6 @@
 //  and it is added to the `KVCEntitiesCache`, if any.
 - (id) kvc_fetchObjectInContext:(NSManagedObjectContext*)moc withValue:(id)value forKey:(NSString*)key options:(NSDictionary*)options;
 
-// Fetch an object of the receiver entity using the primaryKey of `mapping`,
-// then set its values, using `mapping` again.
-// If no primaryKey is set, always create a new object.
-- (id) kvc_fetchObjectInContext:(NSManagedObjectContext*)moc withValues:(id)values withMappingDictionary:(KVCEntityMapping*)mapping options:(NSDictionary*)options;
-
 @end
 
 
