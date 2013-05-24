@@ -6,7 +6,7 @@
 //  Copyright (c) 2011 Nicolas Bouilleaud. All rights reserved.
 //
 #import <SenTestingKit/SenTestingKit.h>
-#import "KVCEntityMapping.h"
+#import "KVCMapping.h"
 
 @interface KVCEntityMappingTests : SenTestCase
 @end

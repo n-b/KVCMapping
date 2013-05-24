@@ -7,8 +7,8 @@
 //
 
 #import "NSObject+KVCMapping.h"
-
-#pragma mark NSObject
+#import "KVCEntityMapping+MappingDictionary.h"
+#import "KVCEntityMapping+AssignValue.h"
 
 @implementation NSObject (KVCMapping)
 

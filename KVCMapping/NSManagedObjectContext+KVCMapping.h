@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Capitaine Train. All rights reserved.
 //
 
-#import <CoreData/CoreData.h>
 #import "KVCEntityMapping.h"
 
 @interface NSManagedObjectContext (KVCMapping)

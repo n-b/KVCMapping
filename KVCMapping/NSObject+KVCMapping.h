@@ -6,7 +6,6 @@
 //  Copyright 2011 Nicolas Bouilleaud. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import "KVCEntityMapping.h"
 
 @interface NSObject (KVCMapping)

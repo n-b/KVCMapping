@@ -15,6 +15,7 @@
 // Model Mapping
 // Maps arbitrary keys to entityMapping
 @interface KVCModelMapping : NSObject
+@property NSDictionary * entityMappings;
 - (KVCEntityMapping*) entityMappingForKey:(id)key;
 - (KVCEntityMapping*) entityMappingForEntityName:(NSString*)entityName;
 - (NSArray*) keysForEntityName:(NSString*)entityName;
@@ -25,8 +26,10 @@
 // maps an external object representation to its internal properties and relationships.
 // Each external key is mapped to one or several KVCKeyMappings.
 @interface KVCEntityMapping : NSObject
-
-@property (readonly) NSString* entityName;
+@property NSArray * keyMappings;
+@property NSString* entityName;
+// init
+- (id) initWithKeyMappings:(NSArray*)keyMappings_ primaryKey:(NSString*)primaryKey_ entityName:(NSString*)entityName_;
 
 // Returns the KVCKeyMappings for this data key.
 //
@@ -39,7 +42,7 @@
 
 // The Primary Key for the Entity in the external representation.
 // used in KVCRelationshipMapping, when
-@property (readonly) id primaryKey;
+@property id primaryKey;
 
 // Reverse mapping
 
@@ -61,7 +64,7 @@
 
 // Abstract Key mapping base class
 @interface KVCKeyMapping : NSObject
-@property (readonly) id key;
+@property id key;
 @end
 
 #pragma mark - KVCPropertyMapping
@@ -81,8 +84,8 @@
  @{ @"full_name" : @[@"ExtractFirstName:firstName", @"ExtractLastName:lastName"] }
  */
 @interface KVCPropertyMapping : KVCKeyMapping
-@property (readonly) NSString * property;
-@property (readonly) NSValueTransformer * transformer;
+@property NSString * property;
+@property NSValueTransformer * transformer;
 @end
 
 #pragma mark - KVCRelationshipMapping
@@ -108,8 +111,8 @@
  @{ @"company_name": @"ACME Inc.", @"employees": @[ @"1", @"2", @"27", @"42" ] }
  */
 @interface KVCRelationshipMapping : KVCKeyMapping
-@property (readonly) NSString * relationship;
-@property (readonly) NSString * foreignKey;
+@property NSString * relationship;
+@property NSString * foreignKey;
 @end
 
 // Key <-> Subobject mapping
@@ -128,88 +131,6 @@
  @{ @"company_name": @"Avengers Inc.", @"employees": @[ @{@"first_name": @"Tony", @"last_name": @"Stark"}, @{ @"first_name": @"Bruce", @"last_name": @"Banner"} ] }
  */
 @interface KVCSubobjectMapping : KVCKeyMapping
-@property (readonly) NSString * relationship;
-@property (readonly) KVCEntityMapping * mapping;
-@end
-
-#pragma mark - Assign Value
-
-@interface KVCKeyMapping (KVCAssignValue)
-// Interpret the value and set it to the object, depending of the receiver's settings.
-// Base implementation does nothing.
-- (void) assignValue:(id)value toObject:(id)object options:(NSDictionary*)options;
-
-// Obtain the external value from the object for this mapping.
-// Base implementation does nothing.
-- (id) valueFromObject:(id)object options:(NSDictionary*)options;
-@end
-
-#pragma mark - Mapping Dictionary Factories
-
-/*
- Parse a Mapping Dictionary in a KVCEntityMapping
- 
- Examples of Mapping Dictionary:
- 
- * Map keys to properties
- @{ @"id" : @"identifier",
- @"first_name" : @"firstName",
- @"last_name" : @"lastName" }
- 
- * Map one key to several properties
- @{ @"id" : @"identifier",
- @"modified_at" : @[@"openDate",@"updateDate"] }
- 
- * Map using a value transformer
- @{ @"id" : @"identifier",
- @"city_name" : @"uppercase:firstName" }
- 
- * Map values from an array
- @{ @0 : @"identifier",
- @1 : @"firstName",
- @2 : @"lastName" }
- 
- * Map to relationships
- @{ @"first_name" : @"firstName",
- @"last_name" : @"lastName"
- @"partner": @"partner.identifier",      // to-one relationship
- @"children" : @"children.identifier" }  // to-many relationship
- 
- * Map to subobjects
- @{ @"first_name" : @"firstName",
- @"last_name" : @"lastName"
- @"partner": @{ @"partner.identifier": @{@"id": @"identifier,
-                                         @"first_name" : @"firstName",
-                                         @"last_name" : @"lastName" } }      // to-one relationship
- @"children" : @{ @"children.identifier": @{@"id": @"identifier,
-                                            @"first_name" : @"firstName",
-                                            @"last_name" : @"lastName" } } } // to-many relationship
- */
-@interface KVCEntityMapping (KVCMappingDictionary)
-- (id)initWithMappingDictionary:(NSDictionary *)rawEntityMapping_ primaryKey:(NSString*)primaryKey_ entityName:(NSString*)entityName_;
-@end
-
-/* 
- Parse a complete Model Mapping Dictionary
-
- Examples:
- 
- * Maps the values for the key @"user" to the "User" entity, with no primary key.
- { @"user" : @{@"User" :  @{ @"first_name" : @"firstName",
-                              @"last_name" : @"lastName" } } }
-
- * ... using "identifier" as the primary key.
- { @"user" : @{@"User.identifier" :  @{ @"id" : @"identifier",
-                                        @"first_name" : @"firstName",
-                                        @"last_name" : @"lastName" } } }
-
- * ... maps both the "user" and "users" keys.
- { [@"user", @"users"] : @{@"User.identifier" :  @{ @"id" : @"identifier",
-                                                    @"first_name" : @"firstName",
-                                                    @"last_name" : @"lastName" } } }
-
- 
- */
-@interface KVCModelMapping (KVCMappingDictionary)
-- (id)initWithMappingDictionary:(NSDictionary *)rawModelMapping_;
+@property NSString * relationship;
+@property KVCEntityMapping * mapping;
 @end

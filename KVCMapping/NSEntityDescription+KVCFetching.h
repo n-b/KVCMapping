@@ -8,7 +8,6 @@
 #import "KVCEntityMapping.h"
 
 @interface NSEntityDescription (KVCFetching)
-
 // Fetch an object of the receiver entity whose value for `key` is equal to the passed `value`
 //
 // if a `KVCEntitiesCache` is passed in `KVCEntitiesCacheOption`, this method performs no actual Coredata fetch, and only looks up the cache.
@@ -18,10 +17,7 @@
 //  its value for `key` is set to `value`,
 //  and it is added to the `KVCEntitiesCache`, if any.
 - (id) kvc_fetchObjectInContext:(NSManagedObjectContext*)moc withValue:(id)value forKey:(NSString*)key options:(NSDictionary*)options;
-
 @end
-
-
 
 @interface NSManagedObject (KVCFetching)
 // Convenience Method
@@ -33,4 +29,3 @@
 // In other words, should only be called on NSManagedObject *subclasses*.
 + (instancetype) kvc_fetchObjectInContext:(NSManagedObjectContext*)moc withValue:(id)value forKey:(NSString*)key options:(NSDictionary*)options;
 @end
-
