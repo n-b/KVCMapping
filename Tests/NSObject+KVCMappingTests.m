@@ -122,7 +122,7 @@
 @implementation OppositeNumberTransformer
 + (BOOL)allowsReverseTransformation { return YES; }
 + (Class) transformedValueClass; { return [NSNumber class]; }
-- (id) transformedValue:(id)value { return @(-[value doubleValue]); }
+- (id) transformedValue:(id)value { return value ? @(-[value doubleValue]) : nil; }
 @end
 
 /****************************************************************************/
@@ -154,6 +154,17 @@
     
     STAssertEqualObjects(values[@"usedProperty1"], @"testValue1", nil);
     STAssertEqualObjects(values[@"usedProperty2"], @"testValue2", nil);
+}
+
+- (void) testNilValues
+{
+    TestClass * test = [TestClass new];
+    test.actualProperty1 = nil;
+    
+    id values = [test kvc_valuesWithMappingDictionary:@{@"usedProperty1": @"actualProperty1"}
+                                              options:nil];
+    
+    STAssertEqualObjects(values[@"usedProperty1"], [NSNull null], nil);
 }
 
 - (void) testValuesFromArray
@@ -200,6 +211,17 @@
     id value = [test kvc_valueForKey:@"usedProperty" withMappingDictionary:@{@"usedProperty": @"opposite:actualProperty1"} options:nil];
     
     STAssertEqualObjects(value, @(-123), nil);
+}
+
+- (void) testSupportedValueTransformerWithNilValue
+{
+    [NSValueTransformer setValueTransformer:[OppositeNumberTransformer new] forName:@"opposite"];
+    TestClass * test = [TestClass new];
+    test.actualProperty1 = nil;
+    
+    id value = [test kvc_valueForKey:@"usedProperty" withMappingDictionary:@{@"usedProperty": @"opposite:actualProperty1"} options:nil];
+    
+    STAssertEqualObjects(value, [NSNull null], nil);
 }
 
 @end

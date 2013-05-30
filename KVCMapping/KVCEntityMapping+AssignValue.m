@@ -49,15 +49,16 @@
 - (id) valueFromObject:(id)object options:(NSDictionary*)options
 {
     id value = [object valueForKey:self.property];
+    id transformedValue = value;
     
     if(self.transformer) {
         if([[self.transformer class] allowsReverseTransformation]) {
-            return [self.transformer reverseTransformedValue:value];
+            transformedValue = [self.transformer reverseTransformedValue:value];
         } else {
             return nil;
         }
     }
-    return value;
+    return transformedValue ?: [NSNull null];
 }
 @end
 
@@ -76,17 +77,21 @@
 }
 - (id) valueFromObject:(id)object options:(NSDictionary*)options
 {
+    id value = nil;
+    
     NSRelationshipDescription * relationshipDesc = [[object entity] relationshipsByName][self.relationship];
     if(!relationshipDesc.isToMany) {
-        return [[object valueForKey:self.relationship] valueForKey:self.foreignKey];
+        value = [[object valueForKey:self.relationship] valueForKey:self.foreignKey];
     } else if ([options[KVCIncludeToManyRelationshipsOption] boolValue]) {
         if(relationshipDesc.isOrdered) {
-            return [[[object valueForKey:self.relationship] array] valueForKey:self.foreignKey];
+            value = [[[object valueForKey:self.relationship] array] valueForKey:self.foreignKey];
         } else {
-            return [[[object valueForKey:self.relationship] allObjects] valueForKey:self.foreignKey];
+            value = [[[object valueForKey:self.relationship] allObjects] valueForKey:self.foreignKey];
         }
+    } else {
+        return nil;
     }
-    return nil;
+    return value ?: [NSNull null];
 }
 @end
 
@@ -105,19 +110,21 @@
 }
 - (id) valueFromObject:(id)object options:(NSDictionary*)options
 {
-    if ([options[KVCIncludeSubobjectsOption] boolValue]) {
-        NSRelationshipDescription * relationshipDesc = [[object entity] relationshipsByName][self.relationship];
-        
-        if(!relationshipDesc.isToMany) {
-            return [[object valueForKey:self.relationship] kvc_valuesWithEntityMapping:self.mapping options:options];
-        } else {
-            NSMutableArray * result = [NSMutableArray new];
-            for (id subobject in [object valueForKey:self.relationship]) {
-                [result addObject:[subobject kvc_valuesWithEntityMapping:self.mapping options:options]];
-            }
-            return [NSArray arrayWithArray:result];
+    if(![options[KVCIncludeSubobjectsOption] boolValue])
+        return nil;
+    
+    id value = nil;
+    NSRelationshipDescription * relationshipDesc = [[object entity] relationshipsByName][self.relationship];
+    
+    if(!relationshipDesc.isToMany) {
+        value = [[object valueForKey:self.relationship] kvc_valuesWithEntityMapping:self.mapping options:options];
+    } else {
+        NSMutableArray * result = [NSMutableArray new];
+        for (id subobject in [object valueForKey:self.relationship]) {
+            [result addObject:[subobject kvc_valuesWithEntityMapping:self.mapping options:options]];
         }
+        value = [NSArray arrayWithArray:result];
     }
-    return nil;
+    return value ?: [NSNull null];
 }
 @end
