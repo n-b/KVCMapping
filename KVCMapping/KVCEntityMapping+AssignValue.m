@@ -49,6 +49,15 @@
 - (id) valueFromObject:(id)object options:(NSDictionary*)options
 {
     id value = [object valueForKey:self.property];
+    
+    // If the object is a NSManagedObject, fix the NSNumber underlying type to the actual attribute type.
+    if([[object class] isSubclassOfClass:[NSManagedObject class]]) {
+        NSAttributeDescription * attributeDesc = [[object entity] attributesByName][self.property];
+        if(attributeDesc) {
+            value = [attributeDesc kvc_fixNumberValueType:value];
+        }
+    }
+
     id transformedValue = value;
     
     if(self.transformer) {

@@ -14,4 +14,15 @@
 //
 // If `value` is not in the expected type and can't be converted, returns nil.
 - (id) kvc_coerceValue:(id)value;
+
+
+// Make sure the underlying CFNumberType matches the attributetype
+// (Only makes sense for Number values, obviously)
+//
+// CoreData may return NSNumbers whose internal type do not match
+// the attribute type. (See CFNumberGetType())
+//
+// This leads to issues when encoding the data in a format where this matters,
+// e.g. in JSON bools should be `true` or `false`, not `0` or `1`
+- (id) kvc_fixNumberValueType:(id)value;
 @end

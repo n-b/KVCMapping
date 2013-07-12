@@ -90,4 +90,26 @@
     }
 }
 
+- (id) kvc_fixNumberValueType:(id)value
+{
+    if(nil==value || ![value isKindOfClass:[NSNumber class]]) {
+        return value;
+    }
+    
+    NSParameterAssert([value isKindOfClass:NSClassFromString(self.attributeValueClassName)]);
+    
+    switch (self.attributeType)
+    {
+            // Numbers
+        case NSBooleanAttributeType : return [NSNumber numberWithBool:[value boolValue]];
+        case NSInteger16AttributeType : return [NSNumber numberWithShort:[value shortValue]];
+        case NSInteger32AttributeType : return [NSNumber numberWithLong:[value intValue]];
+        case NSInteger64AttributeType : return [NSNumber numberWithLongLong:[value longLongValue]];
+        case NSFloatAttributeType : return [NSNumber numberWithFloat:[value floatValue]];
+        case NSDoubleAttributeType : return [NSNumber numberWithDouble:[value doubleValue]];
+        case NSDecimalAttributeType : return [NSDecimalNumber decimalNumberWithDecimal:[value decimalValue]];
+        default : return value;
+    }
+}
+
 @end

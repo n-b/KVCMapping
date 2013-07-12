@@ -113,4 +113,17 @@
     STAssertEqualObjects([self coerceValue:value toAttributeType:NSTransformableAttributeType],value,nil);
 }
 
+- (void) testFixNumberType
+{
+    NSAttributeDescription * attributeDesc = [NSAttributeDescription new];
+    attributeDesc.attributeType = NSBooleanAttributeType;
+    STAssertEquals(CFNumberGetType((__bridge CFNumberRef)[attributeDesc kvc_fixNumberValueType:@1]), kCFNumberCharType, nil);
+
+    attributeDesc.attributeType = NSInteger16AttributeType;
+    STAssertEquals(CFNumberGetType((__bridge CFNumberRef)[attributeDesc kvc_fixNumberValueType:@YES]), kCFNumberSInt16Type, nil);
+
+    attributeDesc.attributeType = NSDoubleAttributeType;
+    STAssertEquals(CFNumberGetType((__bridge CFNumberRef)[attributeDesc kvc_fixNumberValueType:@1]), kCFNumberFloat64Type, nil);
+}
+
 @end
