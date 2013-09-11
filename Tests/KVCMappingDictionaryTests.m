@@ -29,6 +29,7 @@
     STAssertEqualObjects([[entitymapping mappingsForKey:@"id"][0] property] , @"identifier", @"Key Mapping property not set");
     STAssertEqualObjects([[entitymapping mappingsForKey:@"first_name"][0] property] , @"firstName", @"Key Mapping property not set");
     STAssertEqualObjects([[entitymapping mappingsForKey:@"last_name"][0] property] , @"lastName", @"Key Mapping property not set");
+    STAssertNil([entitymapping mappingsForKey:@"unknown_key"], @"The mapping for an unmapped key must be nil");
 }
 
 - (void) testParseMappingDictionaryMultipleMapping

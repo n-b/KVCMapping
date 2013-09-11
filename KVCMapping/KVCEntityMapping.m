@@ -43,6 +43,9 @@
 #pragma mark - KVCEntityMapping
 
 @implementation KVCEntityMapping
+{
+    NSDictionary * _mappingsForKey;
+}
 
 - (id) initWithKeyMappings:(NSArray*)keyMappings_ primaryKey:(NSString*)primaryKey_ entityName:(NSString*)entityName_
 {
@@ -53,14 +56,28 @@
     if(_primaryKey) {
         NSParameterAssert([[self mappingsTo:_primaryKey] count]>0);
     }
+    
+    // Group mappings by key for faster lookup
+    // The resulting _mappingsForKey dictionary has the following form:
+    //     @{ @"foo": @[KVCKeyMapping-to-fooProperty],
+    //        @"bar": @[KVCKeyMapping-to-barProperty, KVCKeyMapping-to-denormalizedBar] }
+    NSMutableDictionary * mappingsForKey = [NSMutableDictionary dictionaryWithCapacity:[_keyMappings count]];
+    for (KVCKeyMapping * mapping in _keyMappings) {
+        NSMutableArray * mappings = mappingsForKey[mapping.key];
+        if (!mappings) {
+            mappings = [NSMutableArray arrayWithCapacity:1];
+            mappingsForKey[mapping.key] = mappings;
+        }
+        [mappings addObject:mapping];
+    }
+    _mappingsForKey = mappingsForKey;
+    
     return self;
 }
 
 - (NSArray*) mappingsForKey:(id)key
 {
-    return [self.keyMappings filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(KVCKeyMapping* keymapping, NSDictionary *bindings) {
-        return [keymapping.key isEqual:key];
-    }]];
+    return _mappingsForKey[key];
 }
 
 - (NSArray*) allKeys
