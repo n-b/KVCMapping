@@ -100,7 +100,7 @@
     return [NSArray arrayWithArray:mappings];
 }
 
-- (id) extractValueFor:(id)propertyOrRelationship fromValues:(id)values
+- (id) extractValueFor:(NSString*)propertyOrRelationship fromValues:(id)values
 {
     NSArray * mappings = [self mappingsTo:propertyOrRelationship];
     if([mappings count]==0) {

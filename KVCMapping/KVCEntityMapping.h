@@ -40,9 +40,9 @@
 // All keys in mapping
 - (NSArray*) allKeys;
 
-// The Primary Key for the Entity in the external representation.
-// used in KVCRelationshipMapping, when
-@property id primaryKey;
+// The Primary Key of the Entity
+// Used in fetch-or-create situation (see kvc_fetchObjectInContext, kvc_importObjects: and KVCEntitiesCache)
+@property NSString* primaryKey;
 
 // Reverse mapping
 
@@ -56,7 +56,7 @@
 //
 // If the mapping associated to the property defines a value transformer, the returned value
 // will be converted using this transformer.
-- (id) extractValueFor:(id)propertyOrRelationship fromValues:(id)values;
+- (id) extractValueFor:(NSString*)propertyOrRelationship fromValues:(id)values;
 
 @end
 
