@@ -63,8 +63,6 @@
             
             // NSStrings
         case NSStringAttributeType :
-            if([value isKindOfClass:[NSString class]])
-                return value;
             if([value respondsToSelector:@selector(stringValue)])
                 return [value stringValue];
             return nil;
@@ -72,12 +70,8 @@
             // Date, Data :
             // We can't coerce automatically.
         case NSDateAttributeType :
-            if([value isKindOfClass:[NSDate class]])
-                return value;
             return nil;
         case NSBinaryDataAttributeType:
-            if([value isKindOfClass:[NSData class]])
-                return value;
             return nil;
             
             // Default behaviour for these (probably gonna crash later anyway)
