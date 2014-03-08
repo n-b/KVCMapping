@@ -45,6 +45,7 @@
 @implementation KVCEntityMapping
 {
     NSDictionary * _mappingsForKey;
+    NSMutableDictionary * _reverseMappingsTo;
 }
 
 - (id) initWithKeyMappings:(NSArray*)keyMappings_ primaryKey:(NSString*)primaryKey_ entityName:(NSString*)entityName_
@@ -72,6 +73,8 @@
     }
     _mappingsForKey = mappingsForKey;
     
+    _reverseMappingsTo = [NSMutableDictionary new];
+    
     return self;
 }
 
@@ -87,17 +90,22 @@
 
 - (NSArray*)mappingsTo:(NSString*)propertyOrRelationship
 {
-    NSMutableArray * mappings = [NSMutableArray new];
-    for (id keyMapping in self.keyMappings) {
-        if( ([keyMapping respondsToSelector:@selector(property)] &&
-             [[keyMapping property] isEqualToString:propertyOrRelationship] )
-           || ([keyMapping respondsToSelector:@selector(relationship)] &&
-               [[keyMapping relationship] isEqualToString:propertyOrRelationship] ) )
-        {
-            [mappings addObject:keyMapping];
+    NSArray * cachedMappingsTo = _reverseMappingsTo[propertyOrRelationship];
+    if(cachedMappingsTo==nil) {
+        NSMutableArray * mappingsTo = [NSMutableArray new];
+        for (id keyMapping in self.keyMappings) {
+            if( ([keyMapping respondsToSelector:@selector(property)] &&
+                 [[keyMapping property] isEqualToString:propertyOrRelationship] )
+               || ([keyMapping respondsToSelector:@selector(relationship)] &&
+                   [[keyMapping relationship] isEqualToString:propertyOrRelationship] ) )
+            {
+                [mappingsTo addObject:keyMapping];
+            }
         }
+        cachedMappingsTo = [NSArray arrayWithArray:mappingsTo];
+        _reverseMappingsTo[propertyOrRelationship] = cachedMappingsTo;
     }
-    return [NSArray arrayWithArray:mappings];
+    return cachedMappingsTo;
 }
 
 - (id) extractValueFor:(NSString*)propertyOrRelationship fromValues:(id)values
