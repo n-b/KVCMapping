@@ -21,6 +21,39 @@
     return class;
 }
 
+static NSString * KVCNumberStringValue(NSNumber* num_)
+{
+    char * buf;
+    NSUInteger len;
+    switch (CFNumberGetType((CFNumberRef)num_)) {
+        case kCFNumberSInt8Type: len = asprintf(&buf, "%c", [num_ charValue]); break;
+        case kCFNumberSInt16Type: len = asprintf(&buf, "%hd", [num_ shortValue]); break;
+        case kCFNumberSInt32Type: len = asprintf(&buf, "%d", [num_ intValue]); break;
+        case kCFNumberSInt64Type: len = asprintf(&buf, "%lld", [num_ longLongValue]); break;
+        case kCFNumberFloat32Type: len = asprintf(&buf, "%g", [num_ floatValue]); break;
+        case kCFNumberFloat64Type: len = asprintf(&buf, "%g", [num_ doubleValue]); break;
+            
+        case kCFNumberCharType: len = asprintf(&buf, "%c", [num_ charValue]); break;
+        case kCFNumberShortType: len = asprintf(&buf, "%d", [num_ shortValue]); break;
+        case kCFNumberIntType: len = asprintf(&buf, "%i", [num_ intValue]); break;
+        case kCFNumberLongType: len = asprintf(&buf, "%ld", [num_ longValue]); break;
+        case kCFNumberLongLongType: len = asprintf(&buf, "%lld", [num_ longLongValue]); break;
+        case kCFNumberFloatType: len = asprintf(&buf, "%g", [num_ floatValue]); break;
+        case kCFNumberDoubleType: len = asprintf(&buf, "%g", [num_ doubleValue]); break;
+            
+        case kCFNumberCFIndexType: len = asprintf(&buf, "%ld", [num_ longValue]); break;
+        case kCFNumberNSIntegerType: len = asprintf(&buf, "%ld", [num_ longValue]); break;
+        case kCFNumberCGFloatType: len = asprintf(&buf, "%g", [num_ doubleValue]); break;
+            
+        default: return [num_ stringValue];
+    }
+    if(buf) {
+        return [[NSString alloc] initWithBytesNoCopy:buf length:len encoding:NSASCIIStringEncoding freeWhenDone:YES];
+    } else {
+        return [num_ stringValue];
+    }
+}
+
 - (id) kvc_coerceValue:(id)value
 {
     if(nil==value) {
@@ -72,7 +105,10 @@
             return nil;
             
             // NSStrings
+            // Avoid using stringValue, which uses locale info. We don't need that.
         case NSStringAttributeType :
+            if([value isKindOfClass:[NSNumber class]])
+                return KVCNumberStringValue(value);
             if([value respondsToSelector:@selector(stringValue)])
                 return [value stringValue];
             return nil;
