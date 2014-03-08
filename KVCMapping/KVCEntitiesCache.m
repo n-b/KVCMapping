@@ -36,6 +36,11 @@
     return [[NSSet setWithArray:[_entitiesCache allValues]] valueForKeyPath:@"@distinctUnionOfSets.accessedInstances"];
 }
 
+- (NSSet*) unaccessedInstances
+{
+    return [[NSSet setWithArray:[_entitiesCache allValues]] valueForKeyPath:@"@distinctUnionOfSets.unaccessedInstances"];
+}
+
 @end
 
 #pragma mark KVCInstancesCache
@@ -90,6 +95,17 @@
 - (NSSet*) accessedInstances
 {
     return [NSSet setWithSet:_accessedInstances];
+}
+
+- (NSSet*) unaccessedInstances
+{
+    if([_accessedInstances count] == [_instances count]) {
+        return [NSSet set];
+    } else {
+        NSMutableSet * unaccessedInstances = [NSMutableSet setWithArray:[_instances allValues]];
+        [unaccessedInstances minusSet:_accessedInstances];
+        return [NSSet setWithSet:unaccessedInstances];
+    }
 }
 
 @end

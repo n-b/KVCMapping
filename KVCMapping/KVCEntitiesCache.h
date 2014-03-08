@@ -26,6 +26,7 @@
 - (id) initWithInstanceCaches:(NSArray*)instanceCaches;
 - (KVCInstancesCache*) instancesCacheForEntity:(NSEntityDescription*)entity;
 - (NSSet*) accessedInstances;
+- (NSSet*) unaccessedInstances;
 @end
 
 // A simple key-value collection for each Entity Cache.
@@ -37,6 +38,7 @@
 - (void) setInstance:(id)instance forKey:(id<NSCopying>)key;
 // Everytime an instance is accessed from the cache (via instanceForKey:), it's added to this property.
 - (NSSet*) accessedInstances;
+- (NSSet*) unaccessedInstances;
 @end
 
 #pragma mark - Creation using a ModelMapping
