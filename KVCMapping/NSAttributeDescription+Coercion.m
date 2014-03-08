@@ -7,8 +7,19 @@
 //
 
 #import "NSAttributeDescription+Coercion.h"
+#import <objc/runtime.h>
 
 @implementation NSAttributeDescription (Coercion)
+
+- (Class) kvc_expectedClass
+{
+    Class class = objc_getAssociatedObject(self, _cmd);
+    if(!class){
+        class = NSClassFromString(self.attributeValueClassName);
+        objc_setAssociatedObject(self, _cmd, class, OBJC_ASSOCIATION_ASSIGN);
+    }
+    return class;
+}
 
 - (id) kvc_coerceValue:(id)value
 {
@@ -16,8 +27,7 @@
         return nil;
     }
     
-    Class expectedClass = NSClassFromString(self.attributeValueClassName);
-    if( [value isKindOfClass:expectedClass]) {
+    if( [value isKindOfClass:[self kvc_expectedClass]]) {
         return value;
     }
     
@@ -90,7 +100,7 @@
         return value;
     }
     
-    NSParameterAssert([value isKindOfClass:NSClassFromString(self.attributeValueClassName)]);
+    NSParameterAssert([value isKindOfClass:[self kvc_expectedClass]]);
     
     switch (self.attributeType)
     {
