@@ -18,7 +18,7 @@
     NSParameterAssert([values isKindOfClass:[NSDictionary class]] || [values isKindOfClass:[NSArray class]]);
     if([values isKindOfClass:[NSDictionary class]]) {
         // Values is a dictionary : just iterate on its keys.
-        for (NSString * wantedKey in [values allKeys]) {
+        for (NSString * wantedKey in values) {
             [self kvc_setValue:values[wantedKey] forKey:wantedKey withEntityMapping:entityMapping options:options];
         }
     } else if([values isKindOfClass:[NSArray class]]) {

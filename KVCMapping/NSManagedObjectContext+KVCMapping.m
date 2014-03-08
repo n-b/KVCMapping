@@ -33,7 +33,7 @@
 {
     NSMutableDictionary *parsedObjectsInfo = [NSMutableDictionary new];
     
-    for (NSString * key in [objectsValues allKeys]) {
+    for (NSString * key in objectsValues) {
         KVCEntityMapping * entityMapping = [modelMapping entityMappingForKey:key];
         
         id valueForClass = objectsValues[key];
