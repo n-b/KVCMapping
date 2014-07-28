@@ -5,7 +5,7 @@
 //  Created by Nicolas Bouilleaud on 27/11/11.
 //  Copyright (c) 2011 Nicolas Bouilleaud. All rights reserved.
 //
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import "KVCMapping.h"
 
 #pragma mark Forward Declarations
@@ -30,7 +30,7 @@
 /****************************************************************************/
 #pragma mark Basic Tests
 
-@interface NSObject_KVCMapping_Tests : SenTestCase
+@interface NSObject_KVCMapping_Tests : XCTestCase
 @end
 
 @implementation NSObject_KVCMapping_Tests
@@ -41,8 +41,8 @@
 
     [test kvc_setValue:@"testValue" forKey:@"usedProperty" withMappingDictionary:@{@"usedProperty": @"actualProperty1"} options:nil ];
 
-    STAssertThrows([test valueForKey:@"usedName"], nil);
-    STAssertEqualObjects([test valueForKey:@"actualProperty1"], @"testValue", nil);
+    XCTAssertThrows([test valueForKey:@"usedName"]);
+    XCTAssertEqualObjects([test valueForKey:@"actualProperty1"], @"testValue");
 }
 
 - (void) testMultipleKey
@@ -53,8 +53,8 @@
  withMappingDictionary:@{@"usedProperty1": @"actualProperty1", @"usedProperty2": @"actualProperty2"}
                options:nil];
     
-    STAssertEqualObjects([test valueForKey:@"actualProperty1"], @"testValue1", nil);
-    STAssertEqualObjects([test valueForKey:@"actualProperty2"], @"testValue2", nil);
+    XCTAssertEqualObjects([test valueForKey:@"actualProperty1"], @"testValue1");
+    XCTAssertEqualObjects([test valueForKey:@"actualProperty2"], @"testValue2");
 }
 
 - (void) testValuesFromArray
@@ -65,8 +65,8 @@
  withMappingDictionary:@{@0: @"actualProperty1", @1: @"actualProperty2"}
                options:nil];
     
-    STAssertEqualObjects([test valueForKey:@"actualProperty1"], @"testValue1", nil);
-    STAssertEqualObjects([test valueForKey:@"actualProperty2"], @"testValue2", nil);
+    XCTAssertEqualObjects([test valueForKey:@"actualProperty1"], @"testValue1");
+    XCTAssertEqualObjects([test valueForKey:@"actualProperty2"], @"testValue2");
 }
 
 - (void) testCompositeValue
@@ -75,8 +75,8 @@
 
     [test kvc_setValue:@"testValue" forKey:@"usedProperty" withMappingDictionary:@{@"usedProperty": @[@"actualProperty1",@"actualProperty2"]} options:nil];
 
-    STAssertEqualObjects([test valueForKey:@"actualProperty1"], @"testValue", nil);
-    STAssertEqualObjects([test valueForKey:@"actualProperty2"], @"testValue", nil);
+    XCTAssertEqualObjects([test valueForKey:@"actualProperty1"], @"testValue");
+    XCTAssertEqualObjects([test valueForKey:@"actualProperty2"], @"testValue");
 }
 
 - (void) testKVCSimpleValueTransformer
@@ -86,7 +86,7 @@
 
     [test kvc_setValue:@"testValue" forKey:@"usedProperty" withMappingDictionary:@{@"usedProperty": @"uppercase:actualProperty1"} options:nil];
 
-    STAssertEqualObjects([test valueForKey:@"actualProperty1"], @"TESTVALUE", nil);
+    XCTAssertEqualObjects([test valueForKey:@"actualProperty1"], @"TESTVALUE");
 }
 
 - (void) testCompositeValueTransformer
@@ -99,8 +99,8 @@
      @{@"usedProperty": @[@"uppercase:actualProperty1",
      @"lowercase:actualProperty2"]}  options:nil];
     
-    STAssertEqualObjects([test valueForKey:@"actualProperty1"], @"TESTVALUE", nil);
-    STAssertEqualObjects([test valueForKey:@"actualProperty2"], @"testvalue", nil);
+    XCTAssertEqualObjects([test valueForKey:@"actualProperty1"], @"TESTVALUE");
+    XCTAssertEqualObjects([test valueForKey:@"actualProperty2"], @"testvalue");
 }
 
 @end
@@ -128,7 +128,7 @@
 /****************************************************************************/
 #pragma mark Reverse Mapping Tests
 
-@interface NSObject_KVCReverseMapping_Tests : SenTestCase
+@interface NSObject_KVCReverseMapping_Tests : XCTestCase
 @end
 
 @implementation NSObject_KVCReverseMapping_Tests
@@ -140,7 +140,7 @@
 
     id value = [test kvc_valueForKey:@"usedProperty" withMappingDictionary:@{@"usedProperty": @"actualProperty1"} options:nil];
     
-    STAssertEqualObjects(value, @"testValue1", nil);
+    XCTAssertEqualObjects(value, @"testValue1");
 }
 
 - (void) testMultipleKey
@@ -152,8 +152,8 @@
     id values = [test kvc_valuesWithMappingDictionary:@{@"usedProperty1": @"actualProperty1", @"usedProperty2": @"actualProperty2"}
                                               options:nil];
     
-    STAssertEqualObjects(values[@"usedProperty1"], @"testValue1", nil);
-    STAssertEqualObjects(values[@"usedProperty2"], @"testValue2", nil);
+    XCTAssertEqualObjects(values[@"usedProperty1"], @"testValue1");
+    XCTAssertEqualObjects(values[@"usedProperty2"], @"testValue2");
 }
 
 - (void) testNilValues
@@ -164,7 +164,7 @@
     id values = [test kvc_valuesWithMappingDictionary:@{@"usedProperty1": @"actualProperty1"}
                                               options:nil];
     
-    STAssertEqualObjects(values[@"usedProperty1"], [NSNull null], nil);
+    XCTAssertEqualObjects(values[@"usedProperty1"], [NSNull null]);
 }
 
 - (void) testValuesFromArray
@@ -176,8 +176,8 @@
     id values = [test kvc_valuesWithMappingDictionary:@{@0: @"actualProperty1", @1: @"actualProperty2"}
                                               options:nil];
     
-    STAssertEqualObjects(values[0], @"testValue1", nil);
-    STAssertEqualObjects(values[1], @"testValue2", nil);
+    XCTAssertEqualObjects(values[0], @"testValue1");
+    XCTAssertEqualObjects(values[1], @"testValue2");
 }
 
 - (void) testCompositeValue
@@ -188,7 +188,7 @@
 
     id value = [test kvc_valueForKey:@"usedProperty" withMappingDictionary:@{@"usedProperty": @[@"actualProperty1",@"actualProperty2"]} options:nil];
     
-    STAssertEqualObjects(value, @"testValue1", nil);
+    XCTAssertEqualObjects(value, @"testValue1");
 }
 
 - (void) testUnsupportedValueTransformer
@@ -199,7 +199,7 @@
     
     id value = [test kvc_valueForKey:@"usedProperty" withMappingDictionary:@{@"usedProperty": @"uppercase:actualProperty1"} options:nil];
     
-    STAssertNil(value, nil);
+    XCTAssertNil(value);
 }
 
 - (void) testSupportedValueTransformer
@@ -210,7 +210,7 @@
     
     id value = [test kvc_valueForKey:@"usedProperty" withMappingDictionary:@{@"usedProperty": @"opposite:actualProperty1"} options:nil];
     
-    STAssertEqualObjects(value, @(-123), nil);
+    XCTAssertEqualObjects(value, @(-123));
 }
 
 - (void) testSupportedValueTransformerWithNilValue
@@ -221,7 +221,7 @@
     
     id value = [test kvc_valueForKey:@"usedProperty" withMappingDictionary:@{@"usedProperty": @"opposite:actualProperty1"} options:nil];
     
-    STAssertEqualObjects(value, [NSNull null], nil);
+    XCTAssertEqualObjects(value, [NSNull null]);
 }
 
 @end

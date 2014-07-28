@@ -5,10 +5,10 @@
 //  Created by Nicolas Bouilleaud on 27/11/11.
 //  Copyright (c) 2011 Nicolas Bouilleaud. All rights reserved.
 //
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import "NSObject+KVCMapping.h"
 
-@interface NSManagedObject_KVCMapping_Tests : SenTestCase
+@interface NSManagedObject_KVCMapping_Tests : XCTestCase
 @end
 
 @implementation NSManagedObject_KVCMapping_Tests
@@ -76,12 +76,12 @@
     for (NSString * wantedKey in _goodDataset) {
         id value = _goodDataset[wantedKey];
         NSString * realKey = _mapping[wantedKey];
-        STAssertEqualObjects([test valueForKey:realKey], value, nil);
+        XCTAssertEqualObjects([test valueForKey:realKey], value);
     }
     // reverse
     id values = [test kvc_valuesWithMappingDictionary:_mapping options:nil];
     
-    STAssertEqualObjects(values, _goodDataset, nil);
+    XCTAssertEqualObjects(values, _goodDataset);
 }
 
 - (void) testAutomaticCoercionDataset
@@ -94,13 +94,13 @@
     for (NSString * wantedKey in _goodDataset) {
         id value = _goodDataset[wantedKey];
         NSString * realKey = _mapping[wantedKey];
-        STAssertEqualObjects([test valueForKey:realKey], value, nil);
+        XCTAssertEqualObjects([test valueForKey:realKey], value);
     }
 
     // reverse
     id values = [test kvc_valuesWithMappingDictionary:_mapping options:nil];
     
-    STAssertEqualObjects(values, _goodDataset, nil);
+    XCTAssertEqualObjects(values, _goodDataset);
 }
 
 @end

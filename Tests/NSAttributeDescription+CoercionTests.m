@@ -5,12 +5,12 @@
 //  Created by Nicolas Bouilleaud on 27/11/11.
 //  Copyright (c) 2011 Nicolas Bouilleaud. All rights reserved.
 //
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import "NSAttributeDescription+Coercion.h"
 
 #pragma mark Coercion Tests
 
-@interface NSManagedObject_KVCMappingCoercion_Tests : SenTestCase
+@interface NSManagedObject_KVCMappingCoercion_Tests : XCTestCase
 @end
 
 @implementation NSManagedObject_KVCMappingCoercion_Tests
@@ -25,105 +25,105 @@
 - (void) testCoercionToNumber
 {
     // From proper strings
-    STAssertEqualObjects([self coerceValue:@"1234" toAttributeType:NSInteger16AttributeType],@1234,nil);
-    STAssertEqualObjects([self coerceValue:@"1234" toAttributeType:NSInteger32AttributeType],@1234,nil);
-    STAssertEqualObjects([self coerceValue:@"1234" toAttributeType:NSInteger16AttributeType],@1234,nil);
-    STAssertEqualObjects([self coerceValue:@"1234" toAttributeType:NSInteger64AttributeType],@1234,nil);
+    XCTAssertEqualObjects([self coerceValue:@"1234" toAttributeType:NSInteger16AttributeType],@1234);
+    XCTAssertEqualObjects([self coerceValue:@"1234" toAttributeType:NSInteger32AttributeType],@1234);
+    XCTAssertEqualObjects([self coerceValue:@"1234" toAttributeType:NSInteger16AttributeType],@1234);
+    XCTAssertEqualObjects([self coerceValue:@"1234" toAttributeType:NSInteger64AttributeType],@1234);
 
-    STAssertEqualObjects([self coerceValue:@"12.3456789" toAttributeType:NSDecimalAttributeType],[NSDecimalNumber decimalNumberWithString:@"12.3456789"],nil);
-    STAssertEqualObjects([self coerceValue:@"12.34" toAttributeType:NSDoubleAttributeType],@12.34,nil);
-    STAssertEqualObjects([self coerceValue:@"12.34" toAttributeType:NSFloatAttributeType],@(12.34f),nil);
+    XCTAssertEqualObjects([self coerceValue:@"12.3456789" toAttributeType:NSDecimalAttributeType],[NSDecimalNumber decimalNumberWithString:@"12.3456789"]);
+    XCTAssertEqualObjects([self coerceValue:@"12.34" toAttributeType:NSDoubleAttributeType],@12.34);
+    XCTAssertEqualObjects([self coerceValue:@"12.34" toAttributeType:NSFloatAttributeType],@(12.34f));
 
     // From garbage strings
-    STAssertEqualObjects([self coerceValue:@"toto" toAttributeType:NSInteger16AttributeType],@0,nil);
-    STAssertEqualObjects([self coerceValue:@"toto" toAttributeType:NSInteger32AttributeType],@0,nil);
-    STAssertEqualObjects([self coerceValue:@"toto" toAttributeType:NSInteger16AttributeType],@0,nil);
-    STAssertEqualObjects([self coerceValue:@"toto" toAttributeType:NSInteger64AttributeType],@0,nil);
+    XCTAssertEqualObjects([self coerceValue:@"toto" toAttributeType:NSInteger16AttributeType],@0);
+    XCTAssertEqualObjects([self coerceValue:@"toto" toAttributeType:NSInteger32AttributeType],@0);
+    XCTAssertEqualObjects([self coerceValue:@"toto" toAttributeType:NSInteger16AttributeType],@0);
+    XCTAssertEqualObjects([self coerceValue:@"toto" toAttributeType:NSInteger64AttributeType],@0);
     
-    STAssertEqualObjects([self coerceValue:@"toto" toAttributeType:NSDecimalAttributeType],[NSDecimalNumber notANumber],nil);
-    STAssertEqualObjects([self coerceValue:@"toto" toAttributeType:NSDoubleAttributeType],@0,nil);
-    STAssertEqualObjects([self coerceValue:@"toto" toAttributeType:NSFloatAttributeType],@0,nil);
+    XCTAssertEqualObjects([self coerceValue:@"toto" toAttributeType:NSDecimalAttributeType],[NSDecimalNumber notANumber]);
+    XCTAssertEqualObjects([self coerceValue:@"toto" toAttributeType:NSDoubleAttributeType],@0);
+    XCTAssertEqualObjects([self coerceValue:@"toto" toAttributeType:NSFloatAttributeType],@0);
 
     // From numbers
-    STAssertEqualObjects([self coerceValue:@1234 toAttributeType:NSInteger16AttributeType],@1234,nil);
-    STAssertEqualObjects([self coerceValue:@1234 toAttributeType:NSInteger32AttributeType],@1234,nil);
-    STAssertEqualObjects([self coerceValue:@1234 toAttributeType:NSInteger16AttributeType],@1234,nil);
-    STAssertEqualObjects([self coerceValue:@1234 toAttributeType:NSInteger64AttributeType],@1234,nil);
+    XCTAssertEqualObjects([self coerceValue:@1234 toAttributeType:NSInteger16AttributeType],@1234);
+    XCTAssertEqualObjects([self coerceValue:@1234 toAttributeType:NSInteger32AttributeType],@1234);
+    XCTAssertEqualObjects([self coerceValue:@1234 toAttributeType:NSInteger16AttributeType],@1234);
+    XCTAssertEqualObjects([self coerceValue:@1234 toAttributeType:NSInteger64AttributeType],@1234);
     
-    STAssertEqualObjects([self coerceValue:@12.3456789 toAttributeType:NSDecimalAttributeType],[NSDecimalNumber decimalNumberWithString:@"12.3456789"],nil);
-    STAssertEqualObjects([self coerceValue:@12.34 toAttributeType:NSDoubleAttributeType],@12.34,nil);
-    STAssertEqualObjects([self coerceValue:@(12.34f) toAttributeType:NSFloatAttributeType],@(12.34f),nil);
+    XCTAssertEqualObjects([self coerceValue:@12.3456789 toAttributeType:NSDecimalAttributeType],[NSDecimalNumber decimalNumberWithString:@"12.3456789"]);
+    XCTAssertEqualObjects([self coerceValue:@12.34 toAttributeType:NSDoubleAttributeType],@12.34);
+    XCTAssertEqualObjects([self coerceValue:@(12.34f) toAttributeType:NSFloatAttributeType],@(12.34f));
     
     // From nil
-    STAssertEqualObjects([self coerceValue:nil toAttributeType:NSInteger16AttributeType],nil,nil);
-    STAssertEqualObjects([self coerceValue:nil toAttributeType:NSInteger32AttributeType],nil,nil);
-    STAssertEqualObjects([self coerceValue:nil toAttributeType:NSInteger16AttributeType],nil,nil);
-    STAssertEqualObjects([self coerceValue:nil toAttributeType:NSInteger64AttributeType],nil,nil);
+    XCTAssertEqualObjects([self coerceValue:nil toAttributeType:NSInteger16AttributeType],nil);
+    XCTAssertEqualObjects([self coerceValue:nil toAttributeType:NSInteger32AttributeType],nil);
+    XCTAssertEqualObjects([self coerceValue:nil toAttributeType:NSInteger16AttributeType],nil);
+    XCTAssertEqualObjects([self coerceValue:nil toAttributeType:NSInteger64AttributeType],nil);
     
-    STAssertEqualObjects([self coerceValue:nil toAttributeType:NSDecimalAttributeType],nil,nil);
-    STAssertEqualObjects([self coerceValue:nil toAttributeType:NSDoubleAttributeType],nil,nil);
-    STAssertEqualObjects([self coerceValue:nil toAttributeType:NSFloatAttributeType],nil,nil);
+    XCTAssertEqualObjects([self coerceValue:nil toAttributeType:NSDecimalAttributeType],nil);
+    XCTAssertEqualObjects([self coerceValue:nil toAttributeType:NSDoubleAttributeType],nil);
+    XCTAssertEqualObjects([self coerceValue:nil toAttributeType:NSFloatAttributeType],nil);
     
     // From garbage data
     id value = [NSData dataWithBytes:"bla" length:4];
-    STAssertEqualObjects([self coerceValue:value toAttributeType:NSInteger16AttributeType],nil,nil);
-    STAssertEqualObjects([self coerceValue:value toAttributeType:NSInteger32AttributeType],nil,nil);
-    STAssertEqualObjects([self coerceValue:value toAttributeType:NSInteger16AttributeType],nil,nil);
-    STAssertEqualObjects([self coerceValue:value toAttributeType:NSInteger64AttributeType],nil,nil);
+    XCTAssertEqualObjects([self coerceValue:value toAttributeType:NSInteger16AttributeType],nil);
+    XCTAssertEqualObjects([self coerceValue:value toAttributeType:NSInteger32AttributeType],nil);
+    XCTAssertEqualObjects([self coerceValue:value toAttributeType:NSInteger16AttributeType],nil);
+    XCTAssertEqualObjects([self coerceValue:value toAttributeType:NSInteger64AttributeType],nil);
     
-    STAssertEqualObjects([self coerceValue:value toAttributeType:NSDecimalAttributeType],nil,nil);
-    STAssertEqualObjects([self coerceValue:value toAttributeType:NSDoubleAttributeType],nil,nil);
-    STAssertEqualObjects([self coerceValue:value toAttributeType:NSFloatAttributeType],nil,nil);
+    XCTAssertEqualObjects([self coerceValue:value toAttributeType:NSDecimalAttributeType],nil);
+    XCTAssertEqualObjects([self coerceValue:value toAttributeType:NSDoubleAttributeType],nil);
+    XCTAssertEqualObjects([self coerceValue:value toAttributeType:NSFloatAttributeType],nil);
 }
 
 - (void) testCoercionToString
 {
-    STAssertEqualObjects([self coerceValue:@"abcd" toAttributeType:NSStringAttributeType],@"abcd",nil);
-    STAssertEqualObjects([self coerceValue:@1234 toAttributeType:NSStringAttributeType],@"1234",nil);
-    STAssertEqualObjects([self coerceValue:@12.34 toAttributeType:NSStringAttributeType],@"12.34",nil);
+    XCTAssertEqualObjects([self coerceValue:@"abcd" toAttributeType:NSStringAttributeType],@"abcd");
+    XCTAssertEqualObjects([self coerceValue:@1234 toAttributeType:NSStringAttributeType],@"1234");
+    XCTAssertEqualObjects([self coerceValue:@12.34 toAttributeType:NSStringAttributeType],@"12.34");
 }
 
 - (void) testCoercionToBool
 {
-    STAssertEqualObjects([self coerceValue:@YES toAttributeType:NSBooleanAttributeType],@YES,nil);
-    STAssertEqualObjects([self coerceValue:@"true" toAttributeType:NSBooleanAttributeType],@YES,nil);
-    STAssertEqualObjects([self coerceValue:@"false" toAttributeType:NSBooleanAttributeType],@NO,nil);
-    STAssertEqualObjects([self coerceValue:@"abcd" toAttributeType:NSBooleanAttributeType],@NO,nil);
+    XCTAssertEqualObjects([self coerceValue:@YES toAttributeType:NSBooleanAttributeType],@YES);
+    XCTAssertEqualObjects([self coerceValue:@"true" toAttributeType:NSBooleanAttributeType],@YES);
+    XCTAssertEqualObjects([self coerceValue:@"false" toAttributeType:NSBooleanAttributeType],@NO);
+    XCTAssertEqualObjects([self coerceValue:@"abcd" toAttributeType:NSBooleanAttributeType],@NO);
 }
 
 - (void) testCoercionToDate
 {
     NSDate * date = [NSDate dateWithTimeIntervalSinceReferenceDate:0];
-    STAssertEqualObjects([self coerceValue:date toAttributeType:NSDateAttributeType],date,nil);
-    STAssertEqualObjects([self coerceValue:@"abcd" toAttributeType:NSDateAttributeType],nil,nil);
+    XCTAssertEqualObjects([self coerceValue:date toAttributeType:NSDateAttributeType],date);
+    XCTAssertEqualObjects([self coerceValue:@"abcd" toAttributeType:NSDateAttributeType],nil);
 }
 
 - (void) testCoercionToData
 {
-    NSDate * data = [NSData dataWithBytes:"abcd" length:5];
-    STAssertEqualObjects([self coerceValue:data toAttributeType:NSBinaryDataAttributeType],data,nil);
-    STAssertEqualObjects([self coerceValue:@"abcd" toAttributeType:NSBinaryDataAttributeType],nil,nil);
+    NSData * data = [NSData dataWithBytes:"abcd" length:5];
+    XCTAssertEqualObjects([self coerceValue:data toAttributeType:NSBinaryDataAttributeType],data);
+    XCTAssertEqualObjects([self coerceValue:@"abcd" toAttributeType:NSBinaryDataAttributeType],nil);
 }
 
 - (void) testCoercionToOtherTypes
 {
     // Passed-through
     id value = [NSObject new];
-    STAssertEqualObjects([self coerceValue:value toAttributeType:NSUndefinedAttributeType],value,nil);
-    STAssertEqualObjects([self coerceValue:value toAttributeType:NSTransformableAttributeType],value,nil);
+    XCTAssertEqualObjects([self coerceValue:value toAttributeType:NSUndefinedAttributeType],value);
+    XCTAssertEqualObjects([self coerceValue:value toAttributeType:NSTransformableAttributeType],value);
 }
 
 - (void) testFixNumberType
 {
     NSAttributeDescription * attributeDesc = [NSAttributeDescription new];
     attributeDesc.attributeType = NSBooleanAttributeType;
-    STAssertEquals(CFNumberGetType((__bridge CFNumberRef)[attributeDesc kvc_fixNumberValueType:@1]), kCFNumberCharType, nil);
+    XCTAssertEqual(CFNumberGetType((__bridge CFNumberRef)[attributeDesc kvc_fixNumberValueType:@1]), kCFNumberCharType);
 
     attributeDesc.attributeType = NSInteger16AttributeType;
-    STAssertEquals(CFNumberGetType((__bridge CFNumberRef)[attributeDesc kvc_fixNumberValueType:@YES]), kCFNumberSInt16Type, nil);
+    XCTAssertEqual(CFNumberGetType((__bridge CFNumberRef)[attributeDesc kvc_fixNumberValueType:@YES]), kCFNumberSInt16Type);
 
     attributeDesc.attributeType = NSDoubleAttributeType;
-    STAssertEquals(CFNumberGetType((__bridge CFNumberRef)[attributeDesc kvc_fixNumberValueType:@1]), kCFNumberFloat64Type, nil);
+    XCTAssertEqual(CFNumberGetType((__bridge CFNumberRef)[attributeDesc kvc_fixNumberValueType:@1]), kCFNumberFloat64Type);
 }
 
 @end

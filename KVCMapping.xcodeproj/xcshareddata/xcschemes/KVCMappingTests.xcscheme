@@ -16,8 +16,8 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "37A80DFD150B8CE800B9B6E1"
-               BuildableName = "KVCMappingTests.octest"
+               BlueprintIdentifier = "373EE11C1982CE5100062CD9"
+               BuildableName = "KVCMappingTests.xctest"
                BlueprintName = "KVCMappingTests"
                ReferencedContainer = "container:KVCMapping.xcodeproj">
             </BuildableReference>

@@ -5,7 +5,7 @@
 //  Created by Nicolas Bouilleaud on 27/11/11.
 //  Copyright (c) 2011 Nicolas Bouilleaud. All rights reserved.
 //
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import "KVCMapping.h"
 
 /****************************************************************************/
@@ -22,7 +22,7 @@
 /****************************************************************************/
 #pragma mark Fetch Tests
 
-@interface NSManagedObject_KVCFetching_Tests : SenTestCase
+@interface NSManagedObject_KVCFetching_Tests : XCTestCase
 @end
 
 @implementation NSManagedObject_KVCFetching_Tests
@@ -49,9 +49,9 @@
     TestEntityClass * objectB = [NSEntityDescription insertNewObjectForEntityForName:@"TestEntityWithClass" inManagedObjectContext:moc];
     objectB.testAttribute = @"B";
 
-    STAssertEqualObjects([TestEntityClass kvc_fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:nil], objectA, nil);
-    STAssertEqualObjects([TestEntityClass kvc_fetchObjectInContext:moc withValue:@"B" forKey:@"testAttribute" options:nil], objectB, nil);
-    STAssertEqualObjects([TestEntityClass kvc_fetchObjectInContext:moc withValue:@"C" forKey:@"testAttribute" options:nil], nil, nil);
+    XCTAssertEqualObjects([TestEntityClass kvc_fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:nil], objectA);
+    XCTAssertEqualObjects([TestEntityClass kvc_fetchObjectInContext:moc withValue:@"B" forKey:@"testAttribute" options:nil], objectB);
+    XCTAssertEqualObjects([TestEntityClass kvc_fetchObjectInContext:moc withValue:@"C" forKey:@"testAttribute" options:nil], nil);
 }
 
 - (void) testFetchObjectWithCoercion
@@ -59,17 +59,17 @@
     TestEntityClass * objectA = [NSEntityDescription insertNewObjectForEntityForName:@"TestEntityWithClass" inManagedObjectContext:moc];
     objectA.testAttribute = @"1234";
     
-    STAssertEqualObjects([TestEntityClass kvc_fetchObjectInContext:moc withValue:@1234 forKey:@"testAttribute" options:nil], objectA, nil);
+    XCTAssertEqualObjects([TestEntityClass kvc_fetchObjectInContext:moc withValue:@1234 forKey:@"testAttribute" options:nil], objectA);
 }
 
 - (void) testCreateOrFetchObject
 {
-    STAssertEqualObjects([TestEntityClass kvc_fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:nil], nil, nil);
+    XCTAssertEqualObjects([TestEntityClass kvc_fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:nil], nil);
     TestEntityClass * objectA = [TestEntityClass kvc_fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:@{KVCCreateObjectOption:@YES}];
-    STAssertNotNil(objectA, nil);
+    XCTAssertNotNil(objectA);
     objectA.testAttribute = @"A";
 
-    STAssertEqualObjects([TestEntityClass kvc_fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:nil], objectA, nil);
+    XCTAssertEqualObjects([TestEntityClass kvc_fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:nil], objectA);
 }
 
 - (void) testFetchObjectWithCache
@@ -82,9 +82,9 @@
                                                                   entityName:@"TestEntityWithClass"
                                                                   primaryKey:@"testAttribute"]]];
 
-    STAssertEqualObjects(cache[@"TestEntityWithClass"][@"A"], objectA, nil);
+    XCTAssertEqualObjects(cache[@"TestEntityWithClass"][@"A"], objectA);
 
-    STAssertEqualObjects([TestEntityClass kvc_fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:(@{KVCCreateObjectOption:@YES, KVCEntitiesCacheOption:cache})], objectA, nil);
+    XCTAssertEqualObjects([TestEntityClass kvc_fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:(@{KVCCreateObjectOption:@YES, KVCEntitiesCacheOption:cache})], objectA);
 }
 
 - (void) testCreateObjectWithCacheMiss
@@ -95,13 +95,13 @@
                                                                   primaryKey:@"testAttribute"]]];
 
     TestEntityClass * objectA = [TestEntityClass kvc_fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:(@{KVCEntitiesCacheOption:cache})];
-    STAssertNil(objectA, nil);
+    XCTAssertNil(objectA);
 
     objectA = [TestEntityClass kvc_fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:(@{KVCCreateObjectOption:@YES, KVCEntitiesCacheOption:cache})];
-    STAssertNotNil(objectA, nil);
-    STAssertEqualObjects(objectA.testAttribute, @"A", nil);
+    XCTAssertNotNil(objectA);
+    XCTAssertEqualObjects(objectA.testAttribute, @"A");
     
-    STAssertEqualObjects(cache[@"TestEntityWithClass"][@"A"], objectA, nil);
+    XCTAssertEqualObjects(cache[@"TestEntityWithClass"][@"A"], objectA);
 }
 
 @end
