@@ -95,7 +95,6 @@
 		373D65131657F2100067FDC3 /* NSManagedObject+KVCMappingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObject+KVCMappingTests.m"; sourceTree = "<group>"; };
 		373D65141657F2100067FDC3 /* NSManagedObject+KVCRelationshipTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObject+KVCRelationshipTests.m"; sourceTree = "<group>"; };
 		373EE11D1982CE5100062CD9 /* KVCMappingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KVCMappingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		373EE1201982CE5100062CD9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		37A80DEE150B8CE800B9B6E1 /* libKVCMapping-ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libKVCMapping-ios.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		37A80DF1150B8CE800B9B6E1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		37A80DF5150B8CE800B9B6E1 /* KVCMapping-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KVCMapping-Prefix.pch"; sourceTree = "<group>"; };
@@ -172,29 +171,12 @@
 			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
-		373EE11E1982CE5100062CD9 /* KVCMappingTests */ = {
-			isa = PBXGroup;
-			children = (
-				373EE11F1982CE5100062CD9 /* Supporting Files */,
-			);
-			path = KVCMappingTests;
-			sourceTree = "<group>";
-		};
-		373EE11F1982CE5100062CD9 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				373EE1201982CE5100062CD9 /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		37A80DE3150B8CE800B9B6E1 = {
 			isa = PBXGroup;
 			children = (
 				37EADF87150B91A0001D3588 /* README.mdown */,
 				37A80DF3150B8CE800B9B6E1 /* KVCMapping */,
 				37A80E07150B8CE800B9B6E1 /* KVCMappingTests */,
-				373EE11E1982CE5100062CD9 /* KVCMappingTests */,
 				37A80DF0150B8CE800B9B6E1 /* Frameworks */,
 				37A80DEF150B8CE800B9B6E1 /* Products */,
 			);
@@ -240,8 +222,6 @@
 				A53A066E174FA9C800EFAE2F /* NSObject+KVCCollection.m */,
 				8350CB371743C34600A7E7B9 /* NSAttributeDescription+Coercion.h */,
 				8350CB381743C34600A7E7B9 /* NSAttributeDescription+Coercion.m */,
-				8350CB3B1743C34600A7E7B9 /* NSManagedObjectContext+KVCMapping.h */,
-				8350CB3C1743C34600A7E7B9 /* NSManagedObjectContext+KVCMapping.m */,
 				373D64FE1657F1C80067FDC3 /* NSManagedObject+KVCRelationship.h */,
 				373D64FF1657F1C80067FDC3 /* NSManagedObject+KVCRelationship.m */,
 				83D4F86D174FC3330082A6DF /* NSManagedObject+KVCSubobject.h */,
@@ -250,6 +230,8 @@
 				8350CB3A1743C34600A7E7B9 /* NSEntityDescription+KVCFetching.m */,
 				8350CB241743BF4800A7E7B9 /* KVCEntitiesCache.h */,
 				8350CB251743BF4800A7E7B9 /* KVCEntitiesCache.m */,
+				8350CB3B1743C34600A7E7B9 /* NSManagedObjectContext+KVCMapping.h */,
+				8350CB3C1743C34600A7E7B9 /* NSManagedObjectContext+KVCMapping.m */,
 				37A80DF4150B8CE800B9B6E1 /* Supporting Files */,
 			);
 			path = KVCMapping;

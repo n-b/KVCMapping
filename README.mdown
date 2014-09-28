@@ -1,11 +1,14 @@
-**KVC Mapping** is the automatic translation of external data to your internal model objects. It's useful when importing data, say JSON from a webservice, into your CoreData backend.
+**KVC Mapping** is the automatic translation of external data to your internal model objects. It's useful when importing data, e.g. JSON from a webservice, into your CoreData backend.
 
 **KVC Mapping** features
- * mapping the keys of the external representation to the property names of your model,
-  * including mapping of the same key to several properties in the same entity.
- * mapping the keys in the external representation to relationships between your model's entities,
- * automatic conversion of the data for trivial cases (nonlocalized strings to numbers and vice-versa),
- * easy conversion mechanism for complex cases, using NSValueTransformers.
+
+ * Mapping the keys of the external representation to the property names of your model,
+  * Including mapping of the same key to several properties in the same entity.
+ * Mapping the keys in the external representation to relationships between your model's entities,
+ * A conversion mechanism:
+  * using automatic coercion for trivial cases (e.g. strings to numbers)
+  * configurable NSValueTransformers for more complex cases.
+ * Reverse mapping of objects
 
 **KVC Mapping** does not (yet) support :
  * mapping subdictionaries in the imported data,
@@ -14,12 +17,12 @@
 KVC Mapping
 -----------
 
-Let's say you have a datamodel, representing people, with a name, surname, and birthdate. The corresponding Objective-C class would look like :
+Let’s say you have a datamodel, representing people, with a name, surname, and birthdate. The corresponding Objective-C class would look like :
 
     @interface Person : NSObject
-	    @property NSString * name;
-	    @property NSString * surname;
-	    @property NSString * birthdate;
+        @property NSString * name;
+        @property NSString * surname;
+        @property NSString * birthdate;
         @property BOOL likesCoffee;
     @end
 
@@ -29,13 +32,13 @@ You also happen to have a source for your data, for example a webservice providi
         {
             name1:"John",
             name2:"Doe",
-            birth:"2001/01/01"
+            bday:"2001/01/01"
             caffeine:1
         },
         {
             name1:"Ann",
             name2:"Onymous",
-            birth:"1981/10/23"
+            bday:"1981/10/23"
             caffeine:1
         }
     ]
@@ -55,79 +58,107 @@ In the above example, a simple dictionary :
 
 would be enough to parse the name and surname. You would then write :
 
-	NSDictionary * mapping = [NSDictionary dictionaryWithObjectsAndKeys:
-               @"name", @"name1",
-               @"surname", @"name2",
-               @"likesCoffee", @"caffeine",
-			   nil];
-	
-	for( NSDictionary * personAsDictionary in arrayFromJSON)
-	{
-		Person * person = ...; // create the data object, for example in CoreData
-	    [person setValuesForKeysWithDictionary:personAsDictionary withMappingDictionary:mapping];
-	}
+    NSDictionary * mapping = @{
+               @"name1":@"name",
+               @"name2":@"surname",
+               @"caffeine":@"likesCoffee"
+           };
+    
+    for( NSDictionary * personAsDictionary in arrayFromJSON)
+    {
+        Person * person = ...; // create the data object, for example in CoreData
+        [person kvc_setValues:personAsDictionary withMappingDictionary:mapping options:0];
+    }
 
 Voilà !
-
-KVC Relatonships
-----------------
 
 Value Transformers
 ------------------
 
-But what about birthdate? NSDate are a little tougher to parse, because there's typically no "date" object in raw data. Dates are typically saved as strings, using a [more-or-less standard encoding](http://fr.wikipedia.org/wiki/ISO_8601). Unfortunately, there's no safe way to determine the exact encoding based only on the data. We have to give a hint to the parser.
+But what about `birthdate`? `NSDate`s are a little tougher to parse, because there's typically no "date" object in raw data. Dates are typically saved as strings, using a variant of [a standard encoding](http://fr.wikipedia.org/wiki/ISO_8601). Unfortunately, there's no safe way to determine the exact encoding based only on the data. We have to give a hint to the parser.
 
 In Objective-C, dates are converted to and from strings using NSDateFormatter. Another useful class here is NSValueTransformer, which is used to convert abritrary data from one representation to another. **In KVCMapping, value transformers can be specified by name, right in the mapping dictionary.**
 
 Let's do this for the above example :
 
-	// Create a value transformer with the date formatter
-    // I'm using [Mattt's excellent TransformerKit](https://github.com/mattt/TransformerKit) 
+    // Create a value transformer with the date formatter
+    // I'm using [Mattt’s excellent TransformerKit](https://github.com/mattt/TransformerKit) 
     // for block-based value-transformers :
     [NSValueTransformer registerValueTransformerWithName:@"ISO8601StringToDate"
                                    transformedValueClass:[NSDate class] 
                   returningTransformedValueWithBlock:^id(id value) {
         // Setup a date formatter for our external date representation
         // In the real world, you probably want to specify locale and cache the date formatter.
- 	    NSDateFormatter * dateFormatter = [NSDateFormatter new];
-		[dateFormatter setDateFormat:@"yyyy/MM/dd"];
-		return [dateFormatter dateFromString:value]
-	}];
-	
+        NSDateFormatter * dateFormatter = [NSDateFormatter new];
+        [dateFormatter setDateFormat:@"yyyy/MM/dd"];
+        return [dateFormatter dateFromString:value]
+    }];
+    
 The full mapping dictionary is :
 
-	NSDictionary * mapping = [NSDictionary dictionaryWithObjectsAndKeys:
-               @"name", @"name1",
-               @"surname", @"name2",
-               @"likesCoffee", @"caffeine",
-			   @"ISO8601StringToDate:birthdate", @"birth",
-			   nil];
+    NSDictionary * mapping = @{
+               @"name1":@"name",
+               @"name2":@"surname",
+               @"caffeine":@"likesCoffee",
+               @"bday":@"ISO8601StringToDate:birthdate"
+           };
 
-The exact format for the mapped key is :
+Automatic conversions
+---------------------
 
-	[<ValueTransformerName>":"]<MappedKey>
+## Type coercion
 
+Key-Value Coding supports, to some degree, automatic conversion [between objects and scalars](https://developer.apple.com/library/ios/documentation/cocoa/conceptual/KeyValueCoding/Articles/DataTypes.html), but there's nothing in the Objective-C runtime to prevent you from assigning an `NSNumber` to an `NSString` property, or any other object.
 
-Type Coercion
--------------
+In CoreData, `NSManagedObject`s know a lot more about their own properties, using `NSAttributeDescription`. 
 
-Key-Value Coding supports, to some degree, automatic conversion [between objects and scalars](https://developer.apple.com/library/ios/documentation/cocoa/conceptual/KeyValueCoding/Articles/DataTypes.html), but there's nothing in the Objective-C runtime to prevent you from assigning an NSNumber to an NSString property, or any other object.
+When used with NSManagedObjects, KVCMapping automatically converts objects to the wanted type:
 
-In CoreData, NSManagedObject know a lot more about there own properties, using NSAttributeDescription. 
+* `NSNumber`s are converted to `NSString`s, as decimals.
+* `NSString`s are converted to `NSNumber`s using `- boolValue`, `- intValue`, `- longlongValue`, `- floatValue`, `- doubleValue`, or to `NSDecimalNumber`s depending of the expected attribute type.
 
-**When used with NSManagedObjects, KVCMapping automatically converts objects to the wanted type** :
+## Automatic collections
 
-* NSNumbers are converted to NSString using `- stringValue`;
-* NSStrings are converted to NSNumbers using `- boolValue`, `- intValue`, `- longlongValue`, `- floatValue`, `- doubleValue`, or to NSDecimalNumbers depending of expected attribute type.
+When attempting to set a single object to a to-many relationship, KVCMapping automatically boxes the single-object in a one-item collection.
 
+# Code
 
-Security Considerations
------------------------
+KVCMapping is a multi-layered API, but each level is useful in itself.
 
-Automatic import is cool, but any input data must be checked. This makes parsing easier, and more robust.
+The foremost API are the `kvc_setValue(s):withMapping:` methods on `NSObject` (`NSObject+KVCMapping.h|m`). They take external value(s), and use mapping info to assign it to their receiver. The mapping iself is a `KVCEntityMapping`, typically created from an NSDictionary using a (relatively) friendly syntax. (`KVCEntityMapping+MappingDictionary.h|m`)
 
-KVCMapping only uses the keys you pass in the mapping dictionary. If a key of the external data is not found in the mapping dictionary, it is simply ignored.
+A `KVCEntityMapping` describes how to map external values to an internal model class. It’s composed of several `KVCKeyMapping`s, for each specific type of mapping: property (`KVCPropertyMapping`), relationship (`KVCRelationshipMapping`) or subobject (`KVCSubobjectMapping`). (`KVCEntityMapping.h|m`).
 
-Automatic Type Coercion also makes sure that strings and numbers are converted correctly.
+The exact mechanism used when mapping a value to and from its external representation is in `KVCEntityMapping+AssignValue.h|m`. For NSManagedObjects, it uses entity description to do the mapping, and coercion. (`NSAttributeDescription+Coercion.h|m`, `NSManagedObject+KVCRelationship.h|m`, `NSManagedObject+KVCSubobject.h|m`). `KVCFetching` is used when setting a relationship to an existing object in a CoreData context. (`NSEntityDescription+KVCFetching.h|m`). 
 
-Finally, Value Transformers should check their input data before converting it to the desired type.
+Several `KVCEntityMapping` are typically needed to map a complete data model to and from its external representation: that’s what `KVCModelMapping` is for (`KVCEntityMapping.h|m`). It’s used when importing batch data in CoreData context (`NSManagedObjectContext+KVCMapping.h|m`). It optionally uses a `KVCEntitiesCache` (`KVCEntitiesCache.h|m`) to avoid numerous fetch requests.
+
+# Mapping types
+
+* A value mapping is identifier by its key in the external data
+
+* Property Mapping
+    -> input is a value
+    -> an internal property (identified by its name),
+    -> optionally using a value transformer
+
+* Relationship Mapping
+    -> input is a value, used as a key for the relationship.
+    -> uses a relationship (identified by its name) 
+    -> and the foreignKey to use to fetch this object.
+
+* Subobject Mapping
+    -> input is a dictionary (or array), an external representation of the subobject.
+    -> uses a relationship (identified by its name) 
+    -> and an entity mapping for the subobject.
+
+* KVCMapping can map external representations from **Dictionary and Arrays**
+    -> For dictionaries (the usual case), mapping keys are strings
+    -> For arrays, mapping keys are numbers (as indexes)
+
+* An EntityMapping can map the same external key to several internal properties or relationships.
+* An EntityMapping can map several external keys to the same internal property or relationship.
+
+# Reverse Mapping
+
+* When reverse mapping from internal objects to external data, only the first mapping is used for each key.
