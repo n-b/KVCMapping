@@ -120,7 +120,10 @@
         if([values isKindOfClass:[NSDictionary class]]) {
             value = values[key];
         } else if ([values isKindOfClass:[NSArray class]]) {
-            value = values[[key unsignedIntegerValue]];
+            NSUInteger index = [key unsignedIntegerValue];
+            if(index < [values count]) {
+                value = values[index];
+            }
         }
         if([keyMapping respondsToSelector:@selector(transformer)] && [keyMapping transformer]) {
             value = [[keyMapping transformer] transformedValue:value];
