@@ -16,7 +16,7 @@
 #pragma mark - Mapping Dictionary Factories
 
 @implementation NSString (MappingDictionary)
-- (NSArray*) kvc_splitWithSeparator:(NSString*)separator
+- (NSArray*)kvc_splitWithSeparator:(NSString*)separator
 {
     NSRange range = [self rangeOfString:separator];
     if(range.location==NSNotFound) {
@@ -34,7 +34,7 @@ NSString * const KVCMapPrimaryKeySeparator = @".";
 - (id)initWithMappingDictionary:(NSDictionary *)rawModelMapping_
 {
     self = [super init];
-    NSMutableDictionary * dict = [NSMutableDictionary new];
+    NSMutableDictionary * dict = NSMutableDictionary.new;
     for (NSArray * keys in rawModelMapping_) {
         NSDictionary * entityDict = rawModelMapping_[keys];
         NSParameterAssert([entityDict count]==1);
@@ -63,7 +63,7 @@ NSString * const KVCMapPrimaryKeySeparator = @".";
 @implementation KVCEntityMapping (MappingDictionary)
 - (id)initWithMappingDictionary:(NSDictionary *)rawEntityMapping_ primaryKey:(NSString*)primaryKey_ entityName:(NSString*)entityName_
 {
-    NSMutableArray * keyMappings = [NSMutableArray new];
+    NSMutableArray * keyMappings = NSMutableArray.new;
     // For each key
     if(rawEntityMapping_) {
         for (NSString* key_ in rawEntityMapping_) {
@@ -94,13 +94,13 @@ NSString * const KVCMapPrimaryKeySeparator = @".";
 
 - (id) initWithRawMapping:(id)rawMapping_ key:(id)key_
 {
-    if([rawMapping_ isKindOfClass:[self class]]) {
+    if([rawMapping_ isKindOfClass:self.class]) {
         ((KVCKeyMapping*)rawMapping_)->_key = key_;
         return rawMapping_;
     }
     
-    Class class = [[self class] _mappingClassWithRawMapping:rawMapping_];
-    NSParameterAssert([class isSubclassOfClass:[self class]] && ![class isEqual:[self class]]);
+    Class class = [self.class _mappingClassWithRawMapping:rawMapping_];
+    NSParameterAssert([class isSubclassOfClass:self.class] && ![class isEqual:self.class]);
     return [[class alloc] initWithRawMapping:rawMapping_ key:key_];
 }
 

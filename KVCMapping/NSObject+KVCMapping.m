@@ -13,7 +13,7 @@
 @implementation NSObject (KVCMapping)
 
 // Forward mapping
-- (void) kvc_setValues:(id)values withEntityMapping:(KVCEntityMapping*)entityMapping options:(NSDictionary*)options
+- (void)kvc_setValues:(id)values withEntityMapping:(KVCEntityMapping*)entityMapping options:(NSDictionary*)options
 {
     NSParameterAssert([values isKindOfClass:[NSDictionary class]] || [values isKindOfClass:[NSArray class]]);
     if([values isKindOfClass:[NSDictionary class]]) {
@@ -30,7 +30,7 @@
     }
 }
 
-- (void) kvc_setValue:(id)value forKey:(id)wantedKey withEntityMapping:(KVCEntityMapping*)entityMapping options:(NSDictionary*)options
+- (void)kvc_setValue:(id)value forKey:(id)wantedKey withEntityMapping:(KVCEntityMapping*)entityMapping options:(NSDictionary*)options
 {
     // Find the mappings to use for this key (as a source key can be mapped to several destination properties).
     NSArray* keyMappings = [entityMapping mappingsForKey:wantedKey];
@@ -41,12 +41,12 @@
 }
 
 // Convenience Methods
-- (void) kvc_setValues:(id)values withMappingDictionary:(NSDictionary*)mappingDict options:(NSDictionary*)options
+- (void)kvc_setValues:(id)values withMappingDictionary:(NSDictionary*)mappingDict options:(NSDictionary*)options
 {
     [self kvc_setValues:values withEntityMapping:[[KVCEntityMapping alloc] initWithMappingDictionary:mappingDict primaryKey:nil entityName:nil] options:options];
 }
 
-- (void) kvc_setValue:(id)value forKey:(id)wantedKey withMappingDictionary:(NSDictionary*)mappingDict options:(NSDictionary*)options
+- (void)kvc_setValue:(id)value forKey:(id)wantedKey withMappingDictionary:(NSDictionary*)mappingDict options:(NSDictionary*)options
 {
     [self kvc_setValue:value forKey:wantedKey withEntityMapping:[[KVCEntityMapping alloc] initWithMappingDictionary:mappingDict primaryKey:nil entityName:nil] options:options];
 }
@@ -65,7 +65,7 @@
 
 - (id) kvc_valuesWithEntityMapping:(KVCEntityMapping*)entityMapping options:(NSDictionary*)options
 {
-    id values = [NSMutableDictionary new];
+    id values = NSMutableDictionary.new;
     for (id key in [entityMapping allKeys]) {
         id value = [self kvc_valueForKey:key withEntityMapping:entityMapping options:options];
         if(value) {
@@ -76,7 +76,7 @@
     NSArray * keysClasses = [[values allKeys] valueForKeyPath:@"@distinctUnionOfObjects.class"];
     if([keysClasses count]==1 && [keysClasses[0] isSubclassOfClass:[NSNumber class]])
     {
-        NSMutableArray * valuesArray = [NSMutableArray new];
+        NSMutableArray * valuesArray = NSMutableArray.new;
         for (NSUInteger i=0; i<[values count]; i++) {
             [valuesArray addObject:values[@(i)]];
         }

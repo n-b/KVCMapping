@@ -12,7 +12,7 @@
 
 @implementation NSManagedObject (KVCRelationship)
 
-- (void) kvc_setRelationship:(NSString*)relationshipName toObjectWithValue:(id)value
+- (void)kvc_setRelationship:(NSString*)relationshipName toObjectWithValue:(id)value
                       forKey:(NSString*)key options:(NSDictionary*)options
 {
     NSRelationshipDescription * relationshipDesc = [[self entity] relationshipsByName][relationshipName];
@@ -28,7 +28,7 @@
     [self setValue:destinationObject forKey:relationshipName];
 }
 
-- (void) kvc_setRelationship:(NSString*)relationshipName toObjectsWithValueIn:(id)valueCollection
+- (void)kvc_setRelationship:(NSString*)relationshipName toObjectsWithValueIn:(id)valueCollection
                       forKey:(NSString*)key options:(NSDictionary*)options
 {
     NSRelationshipDescription * relationshipDesc = [[self entity] relationshipsByName][relationshipName];
@@ -41,7 +41,7 @@
         return;
     }
     
-    id destinationObjects = relationshipDesc.isOrdered ? [NSMutableOrderedSet new] : [NSMutableSet new];
+    id destinationObjects = relationshipDesc.isOrdered ? NSMutableOrderedSet.new : NSMutableSet.new;
     for (id value in valueCollection) {
         id destinationObject = [destinationEntity kvc_fetchObjectInContext:self.managedObjectContext withValue:value forKey:key options:options];
         [destinationObjects addObject:destinationObject];

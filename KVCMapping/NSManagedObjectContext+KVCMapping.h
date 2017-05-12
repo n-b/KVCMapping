@@ -17,7 +17,7 @@
 // If entityMapping specifies a primary key, search for a matching existing object first.
 //
 // See also `KVCEntitiesCacheOption` and `KVCCreateObjectOption`
-- (NSManagedObject *) kvc_importObject:(NSDictionary*)values
+- (NSManagedObject *)kvc_importObject:(NSDictionary*)values
                      withEntityMapping:(KVCEntityMapping*)entityMapping
                                options:(NSDictionary*)options;
 
@@ -27,7 +27,7 @@
 // `objectsValues` is a dictionary whoses keys match the keys in modelMapping.
 //
 // Return a debug help dictionary containing the imported values for each created/updated managedObjectID.
-- (NSDictionary*) kvc_importObjects:(NSDictionary *)objectsValues
+- (NSDictionary*)kvc_importObjects:(NSDictionary *)objectsValues
                    withModelMapping:(KVCModelMapping *)modelMapping
                             options:(NSDictionary *)options;
 

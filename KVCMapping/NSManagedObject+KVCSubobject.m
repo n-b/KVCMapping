@@ -14,14 +14,14 @@
 
 @implementation NSManagedObject (KVCSubobject)
 
-- (void) kvc_setRelationship:(NSString*)relationshipName toSubobjectFromValues:(id)values
+- (void)kvc_setRelationship:(NSString*)relationshipName toSubobjectFromValues:(id)values
                 usingMapping:(KVCEntityMapping*)entityMapping options:(NSDictionary*)options
 {
-    NSRelationshipDescription * relationshipDesc = [[self entity] relationshipsByName][relationshipName];
+    NSRelationshipDescription * relationshipDesc = self.entity.relationshipsByName[relationshipName];
     
     NSParameterAssert(!relationshipDesc.isToMany);
     
-    NSEntityDescription * destinationEntity = [relationshipDesc destinationEntity];
+    NSEntityDescription * destinationEntity = relationshipDesc.destinationEntity;
     if(nil==destinationEntity) {
         return;
     }
@@ -40,20 +40,20 @@
     [self setValue:destinationObject forKey:relationshipName];
 }
 
-- (void) kvc_setRelationship:(NSString*)relationshipName toSubobjectsFromValuesCollection:(id)valuesCollection
+- (void)kvc_setRelationship:(NSString*)relationshipName toSubobjectsFromValuesCollection:(id)valuesCollection
                 usingMapping:(KVCEntityMapping*)entityMapping options:(NSDictionary*)options
 {
-    NSRelationshipDescription * relationshipDesc = [[self entity] relationshipsByName][relationshipName];
+    NSRelationshipDescription * relationshipDesc = self.entity.relationshipsByName[relationshipName];
     
     NSParameterAssert([valuesCollection kvc_isCollection]);
     NSParameterAssert(relationshipDesc.isToMany);
     
-    NSEntityDescription * destinationEntity = [relationshipDesc destinationEntity];
+    NSEntityDescription * destinationEntity = relationshipDesc.destinationEntity;
     if(nil==destinationEntity) {
         return;
     }
     
-    id destinationObjects = relationshipDesc.isOrdered ? [NSMutableOrderedSet new] : [NSMutableSet new];
+    id destinationObjects = relationshipDesc.isOrdered ? NSMutableOrderedSet.new : NSMutableSet.new;
     for (id values in valuesCollection) {
         id destinationObject;
         if(entityMapping.primaryKey) {

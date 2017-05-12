@@ -12,7 +12,7 @@
 
 @implementation NSManagedObjectContext (KVCMapping)
 
-- (NSManagedObject *) kvc_importObject:(NSDictionary*)values
+- (NSManagedObject *)kvc_importObject:(NSDictionary*)values
                     withEntityMapping:(KVCEntityMapping*)entityMapping
                               options:(NSDictionary*)options
 {
@@ -27,11 +27,11 @@
     return object;
 }
 
-- (NSDictionary*) kvc_importObjects:(NSDictionary *)objectsValues
+- (NSDictionary*)kvc_importObjects:(NSDictionary *)objectsValues
                    withModelMapping:(KVCModelMapping *)modelMapping
                             options:(NSDictionary *)options
 {
-    NSMutableDictionary *parsedObjectsInfo = [NSMutableDictionary new];
+    NSMutableDictionary *parsedObjectsInfo = NSMutableDictionary.new;
     
     for (NSString * key in objectsValues) {
         KVCEntityMapping * entityMapping = [modelMapping entityMappingForKey:key];

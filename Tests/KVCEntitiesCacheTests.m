@@ -21,19 +21,19 @@
     NSManagedObjectContext * moc;
 }
 
-- (void) setUp
+- (void)setUp
 {
     [super setUp];
     
-    moc = [NSManagedObjectContext new];
+    moc = NSManagedObjectContext.new;
     moc.persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:
                                       [[NSManagedObjectModel alloc] initWithContentsOfURL:
-                                       [[NSBundle bundleForClass:[self class]] URLForResource:@"NSManagedObject_KVCMapping_Tests"
+                                       [[NSBundle bundleForClass:self.class] URLForResource:@"NSManagedObject_KVCMapping_Tests"
                                                                                 withExtension:@"mom"]]];
 
 }
 
-- (void) testCachePresenceOfEntities
+- (void)testCachePresenceOfEntities
 {
     // Given
     // Create an A instance
@@ -69,7 +69,7 @@
     XCTAssertEqualObjects(cache[@"TestRelatedEntityA"][@"value2"], a2, @"object a2 should be in cache");
 }
 
-- (void) testCacheAccessedEntities
+- (void)testCacheAccessedEntities
 {
     // Given
     // Create an A instance

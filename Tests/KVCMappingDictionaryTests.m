@@ -13,7 +13,7 @@
 
 @implementation KVCEntityMappingTests
 
-- (void) testParseMappingDictionarySimple
+- (void)testParseMappingDictionarySimple
 {
     // Given
     id mappingDictionary = @{ @"id" : @"identifier",
@@ -32,7 +32,7 @@
     XCTAssertNil([entitymapping mappingsForKey:@"unknown_key"], @"The mapping for an unmapped key must be nil");
 }
 
-- (void) testParseMappingDictionaryMultipleMapping
+- (void)testParseMappingDictionaryMultipleMapping
 {
     // Given
     id mappingDictionary = @{ @"modified_at" : @[@"openDate",@"updateDate"] };
@@ -46,10 +46,10 @@
     XCTAssertEqualObjects([[entitymapping mappingsForKey:@"modified_at"][1] property] , @"updateDate", @"Key Mapping property not set");
 }
 
-- (void) testParseMappingDictionaryWithTransformers
+- (void)testParseMappingDictionaryWithTransformers
 {
     // Given
-    NSValueTransformer * fakeTransformer = [NSValueTransformer new];
+    NSValueTransformer * fakeTransformer = NSValueTransformer.new;
     [NSValueTransformer setValueTransformer:fakeTransformer forName:@"fake"];
     id mappingDictionary = @{ @"somekey" : @"fake:someproperty" };
 
@@ -61,7 +61,7 @@
     XCTAssertEqualObjects([[entitymapping mappingsForKey:@"somekey"][0] transformer] , fakeTransformer, @"Key Mapping transformer not set");
 }
 
-- (void) testParseMappingDictionaryWithRelationship
+- (void)testParseMappingDictionaryWithRelationship
 {
     // Given
     id mappingDictionary =  @{ @"partner": @"partner.identifier" };
@@ -74,7 +74,7 @@
     XCTAssertEqualObjects([[entitymapping mappingsForKey:@"partner"][0] foreignKey] , @"identifier", @"Relationship Mapping foreign key not set");
 }
 
-- (void) testParseMappingDictionaryWithSubobject
+- (void)testParseMappingDictionaryWithSubobject
 {
     // Given
     id mappingDictionary =  @{ @"partner": @{ @"partner.identifier": @{@"id": @"identifier",
@@ -93,7 +93,7 @@
 }
 
 
-- (void) testParseSimpleModelDictionary
+- (void)testParseSimpleModelDictionary
 {
     // Given
     id mappingDictionary = @{ @"user" : @{@"User" :  @{ @"first_name" : @"firstName",
@@ -110,7 +110,7 @@
     XCTAssertEqual([[entityMapping mappingsForKey:@"first_name"] count], (NSUInteger)1, @"Key Mapping should be created");
 }
 
-- (void) testParseComplexModelDictionary
+- (void)testParseComplexModelDictionary
 {
     // Given
     id mappingDictionary = @{ @[@"user",@"users"] : @{@"User.identifier" :  @{ @"id": @"identifier",

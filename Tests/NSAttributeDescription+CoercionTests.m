@@ -17,12 +17,12 @@
 
 - (id) coerceValue:(id)value toAttributeType:(NSAttributeType)attributeType
 {
-    NSAttributeDescription * attributeDesc = [NSAttributeDescription new];
+    NSAttributeDescription * attributeDesc = NSAttributeDescription.new;
     attributeDesc.attributeType = attributeType;
     return [attributeDesc kvc_coerceValue:value];
 }
 
-- (void) testCoercionToNumber
+- (void)testCoercionToNumber
 {
     // From proper strings
     XCTAssertEqualObjects([self coerceValue:@"1234" toAttributeType:NSInteger16AttributeType],@1234);
@@ -76,14 +76,14 @@
     XCTAssertEqualObjects([self coerceValue:value toAttributeType:NSFloatAttributeType],nil);
 }
 
-- (void) testCoercionToString
+- (void)testCoercionToString
 {
     XCTAssertEqualObjects([self coerceValue:@"abcd" toAttributeType:NSStringAttributeType],@"abcd");
     XCTAssertEqualObjects([self coerceValue:@1234 toAttributeType:NSStringAttributeType],@"1234");
     XCTAssertEqualObjects([self coerceValue:@12.34 toAttributeType:NSStringAttributeType],@"12.34");
 }
 
-- (void) testCoercionToBool
+- (void)testCoercionToBool
 {
     XCTAssertEqualObjects([self coerceValue:@YES toAttributeType:NSBooleanAttributeType],@YES);
     XCTAssertEqualObjects([self coerceValue:@"true" toAttributeType:NSBooleanAttributeType],@YES);
@@ -91,31 +91,31 @@
     XCTAssertEqualObjects([self coerceValue:@"abcd" toAttributeType:NSBooleanAttributeType],@NO);
 }
 
-- (void) testCoercionToDate
+- (void)testCoercionToDate
 {
     NSDate * date = [NSDate dateWithTimeIntervalSinceReferenceDate:0];
     XCTAssertEqualObjects([self coerceValue:date toAttributeType:NSDateAttributeType],date);
     XCTAssertEqualObjects([self coerceValue:@"abcd" toAttributeType:NSDateAttributeType],nil);
 }
 
-- (void) testCoercionToData
+- (void)testCoercionToData
 {
     NSData * data = [NSData dataWithBytes:"abcd" length:5];
     XCTAssertEqualObjects([self coerceValue:data toAttributeType:NSBinaryDataAttributeType],data);
     XCTAssertEqualObjects([self coerceValue:@"abcd" toAttributeType:NSBinaryDataAttributeType],nil);
 }
 
-- (void) testCoercionToOtherTypes
+- (void)testCoercionToOtherTypes
 {
     // Passed-through
-    id value = [NSObject new];
+    id value = NSObject.new;
     XCTAssertEqualObjects([self coerceValue:value toAttributeType:NSUndefinedAttributeType],value);
     XCTAssertEqualObjects([self coerceValue:value toAttributeType:NSTransformableAttributeType],value);
 }
 
-- (void) testFixNumberType
+- (void)testFixNumberType
 {
-    NSAttributeDescription * attributeDesc = [NSAttributeDescription new];
+    NSAttributeDescription * attributeDesc = NSAttributeDescription.new;
     attributeDesc.attributeType = NSBooleanAttributeType;
     XCTAssertEqual(CFNumberGetType((__bridge CFNumberRef)[attributeDesc kvc_fixNumberValueType:@1]), kCFNumberCharType);
 

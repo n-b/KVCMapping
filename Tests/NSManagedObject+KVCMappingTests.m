@@ -18,17 +18,17 @@
     NSDictionary * _goodDataset, * _badDataSet;
 }
 
-- (void) setUp
+- (void)setUp
 {
     [super setUp];
     
-    _moc = [NSManagedObjectContext new];
+    _moc = NSManagedObjectContext.new;
     _moc.persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:
                                        [[NSManagedObjectModel alloc] initWithContentsOfURL:
-                                        [[NSBundle bundleForClass:[self class]] URLForResource:@"NSManagedObject_KVCMapping_Tests"
+                                        [[NSBundle bundleForClass:self.class] URLForResource:@"NSManagedObject_KVCMapping_Tests"
                                                                                  withExtension:@"mom"]]];
     
-    NSDate * date = [NSDate date];
+    NSDate * date = NSDate.date;
     
     _mapping = @{@"usedBoolean": @"actualBoolean",
                 @"usedData": @"actualData",
@@ -66,7 +66,7 @@
                     @"usedDate": date};
 }
 
-- (void) testSimpleDataset
+- (void)testSimpleDataset
 {
     // Checks the values in the goodDataSet are correctly set
     NSManagedObject * test = [NSEntityDescription insertNewObjectForEntityForName:@"TestEntity" inManagedObjectContext:_moc];
@@ -84,7 +84,7 @@
     XCTAssertEqualObjects(values, _goodDataset);
 }
 
-- (void) testAutomaticCoercionDataset
+- (void)testAutomaticCoercionDataset
 {
     // Checks the values from the badDataSet are converted to values equal to the ones in the goodDataSet
     NSManagedObject * test = [NSEntityDescription insertNewObjectForEntityForName:@"TestEntity" inManagedObjectContext:_moc];

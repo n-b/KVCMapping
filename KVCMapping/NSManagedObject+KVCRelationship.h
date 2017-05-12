@@ -12,10 +12,10 @@
 
 //
 // Fetch an existing object (or create it) and set it as the destination of a relationship.
-- (void) kvc_setRelationship:(NSString*)relationshipName toObjectWithValue:(id)value
+- (void)kvc_setRelationship:(NSString*)relationshipName toObjectWithValue:(id)value
                       forKey:(NSString*)key options:(NSDictionary*)options;
 // To-many relationship variant : valueCollection is an array or set of values.
-- (void) kvc_setRelationship:(NSString*)relationshipName toObjectsWithValueIn:(id)valueCollection
+- (void)kvc_setRelationship:(NSString*)relationshipName toObjectsWithValueIn:(id)valueCollection
                       forKey:(NSString*)key options:(NSDictionary*)options;
 
 @end

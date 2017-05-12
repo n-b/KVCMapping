@@ -68,7 +68,7 @@
     BOOL createObject = [options[KVCCreateObjectOption] boolValue];
     if(nil==obj && createObject)
     {
-        obj = [[self class] insertNewObjectForEntityForName:[self name] inManagedObjectContext:moc];
+        obj = [self.class insertNewObjectForEntityForName:[self name] inManagedObjectContext:moc];
         [obj setValue:correctValue forKey:key];
 
         instancesCache[correctValue] = obj;

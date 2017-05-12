@@ -20,18 +20,18 @@
     NSManagedObjectContext * moc;
 }
 
-- (void) setUp
+- (void)setUp
 {
     [super setUp];
     
-    moc = [NSManagedObjectContext new];
+    moc = NSManagedObjectContext.new;
     moc.persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:
                                       [[NSManagedObjectModel alloc] initWithContentsOfURL:
-                                       [[NSBundle bundleForClass:[self class]] URLForResource:@"NSManagedObject_KVCMapping_Tests"
+                                       [[NSBundle bundleForClass:self.class] URLForResource:@"NSManagedObject_KVCMapping_Tests"
                                                                                 withExtension:@"mom"]]];
 }
 
-- (void) testSetRelationship
+- (void)testSetRelationship
 {
     NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
     NSManagedObject * b = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityB" inManagedObjectContext:moc];
@@ -44,7 +44,7 @@
     XCTAssertEqualObjects([a valueForKey:@"relationToB"], b);
 }
 
-- (void) testSetRelationshipToMany
+- (void)testSetRelationshipToMany
 {
     NSManagedObject * a1 = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
     NSManagedObject * a2 = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
@@ -68,7 +68,7 @@
     XCTAssertEqualObjects([b valueForKey:@"relationToManyAs"], [NSSet setWithObject:a2]);
 }
 
-- (void) testSetRelationshipWithCoercion
+- (void)testSetRelationshipWithCoercion
 {
     NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
     NSManagedObject * b = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityB" inManagedObjectContext:moc];
@@ -81,7 +81,7 @@
     XCTAssertEqualObjects([a valueForKey:@"relationToB"], b);
 }
 
-- (void) testSetRelationshipToNonexistingObject
+- (void)testSetRelationshipToNonexistingObject
 {
     NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
     NSManagedObject * b = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityB" inManagedObjectContext:moc];
@@ -93,7 +93,7 @@
     XCTAssertEqualObjects([b valueForKey:@"relationToA"], nil);
 }
 
-- (void) testSetRelationshipToNonexistingObjectAndCreate
+- (void)testSetRelationshipToNonexistingObjectAndCreate
 {
     NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
     
@@ -104,7 +104,7 @@
     XCTAssertEqualObjects([b valueForKey:@"relationToA"], a);
 }
 
-- (void) testSetRelationshipWithCache
+- (void)testSetRelationshipWithCache
 {
     NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
     NSManagedObject * b = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityB" inManagedObjectContext:moc];
@@ -120,7 +120,7 @@
     XCTAssertEqualObjects([b valueForKey:@"relationToA"], a);
 }
 
-- (void) testSetRelationshipWithCacheMissAndCreateObject
+- (void)testSetRelationshipWithCacheMissAndCreateObject
 {
     NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
 
@@ -136,7 +136,7 @@
     XCTAssertEqualObjects(cache[@"TestRelatedEntityB"][@"value1"], b);
 }
 
-- (void) testSetRelationshipToMissingEntity
+- (void)testSetRelationshipToMissingEntity
 {
     NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
     NSManagedObject * b = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityB" inManagedObjectContext:moc];
@@ -152,7 +152,7 @@
     XCTAssertEqualObjects(b, b2);
 }
 
-- (void) testSetRelationshipWithDictionary
+- (void)testSetRelationshipWithDictionary
 {
     NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
     NSManagedObject * b = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityB" inManagedObjectContext:moc];
@@ -165,7 +165,7 @@
     XCTAssertEqualObjects([a valueForKey:@"relationToB"], b);
 }
 
-- (void) testGetReverseRelationshipWithDictionary
+- (void)testGetReverseRelationshipWithDictionary
 {
     NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
     NSManagedObject * b = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityB" inManagedObjectContext:moc];
@@ -178,7 +178,7 @@
     XCTAssertEqualObjects(values, @{@"a": @"value1"});
 }
 
-- (void) testGetReverseRelationshipWithDictionaryToMany
+- (void)testGetReverseRelationshipWithDictionaryToMany
 {
     NSManagedObject * a1 = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
     NSManagedObject * a2 = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
@@ -196,7 +196,7 @@
     XCTAssertEqualObjects([NSSet setWithArray:[values valueForKey:@"a"]], [NSSet setWithArray:(@[@"value1", @"value2"])]);
 }
 
-- (void) testSetRelationshipWithSubobjectMapping
+- (void)testSetRelationshipWithSubobjectMapping
 {
     NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
     
@@ -211,7 +211,7 @@
     XCTAssertEqualObjects([b valueForKey:@"attributeInB"], @"VALUE");
 }
 
-- (void) testSetRelationshipWithManySubobjectMapping
+- (void)testSetRelationshipWithManySubobjectMapping
 {
     NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
     
@@ -227,7 +227,7 @@
     XCTAssertEqualObjects([b valueForKey:@"attributeInB"], ([NSSet setWithArray:@[@"VALUE_1", @"VALUE_2" ]]));
 }
 
-- (void) testSetRelationshipWithExistingSubobjectMapping
+- (void)testSetRelationshipWithExistingSubobjectMapping
 {
     NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
     NSManagedObject * b = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityB" inManagedObjectContext:moc];
@@ -244,7 +244,7 @@
     XCTAssertEqual(b, newb);
 }
 
-- (void) testGetReverseRelationshipWithSubobjectMapping
+- (void)testGetReverseRelationshipWithSubobjectMapping
 {
     NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
     NSManagedObject * b = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityB" inManagedObjectContext:moc];
@@ -261,7 +261,7 @@
     XCTAssertEqualObjects(values, @{@"b": @{@"attr":@"VALUE"}});
 }
 
-- (void) testGetReverseRelationshipWithManySubobjectsMapping
+- (void)testGetReverseRelationshipWithManySubobjectsMapping
 {
     NSManagedObject * a = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityA" inManagedObjectContext:moc];
     NSManagedObject * b1 = [NSEntityDescription insertNewObjectForEntityForName:@"TestRelatedEntityB" inManagedObjectContext:moc];

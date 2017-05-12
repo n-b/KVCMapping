@@ -89,7 +89,7 @@ Let's do this for the above example :
                   returningTransformedValueWithBlock:^id(id value) {
         // Setup a date formatter for our external date representation
         // In the real world, you probably want to specify locale and cache the date formatter.
-        NSDateFormatter * dateFormatter = [NSDateFormatter new];
+        NSDateFormatter * dateFormatter = NSDateFormatter.new;
         [dateFormatter setDateFormat:@"yyyy/MM/dd"];
         return [dateFormatter dateFromString:value]
     }];

@@ -11,7 +11,7 @@
 @interface KVCKeyMapping (KVCAssignValue)
 // Interpret the value and set it to the object, depending of the receiver's settings.
 // Base implementation does nothing.
-- (void) assignValue:(id)value toObject:(id)object options:(NSDictionary*)options;
+- (void)assignValue:(id)value toObject:(id)object options:(NSDictionary*)options;
 
 // Obtain the external value from the object for this mapping.
 // Base implementation does nothing.

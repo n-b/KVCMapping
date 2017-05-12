@@ -31,18 +31,18 @@
     NSManagedObjectContext * moc;
 }
 
-- (void) setUp
+- (void)setUp
 {
     [super setUp];
     
-    moc = [NSManagedObjectContext new];
+    moc = NSManagedObjectContext.new;
     moc.persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:
                                       [[NSManagedObjectModel alloc] initWithContentsOfURL:
-                                       [[NSBundle bundleForClass:[self class]] URLForResource:@"NSManagedObject_KVCMapping_Tests"
+                                       [[NSBundle bundleForClass:self.class] URLForResource:@"NSManagedObject_KVCMapping_Tests"
                                                                                 withExtension:@"mom"]]];
 }
 
-- (void) testFetchObject
+- (void)testFetchObject
 {
     TestEntityClass * objectA = [NSEntityDescription insertNewObjectForEntityForName:@"TestEntityWithClass" inManagedObjectContext:moc];
     objectA.testAttribute = @"A";
@@ -54,7 +54,7 @@
     XCTAssertEqualObjects([TestEntityClass kvc_fetchObjectInContext:moc withValue:@"C" forKey:@"testAttribute" options:nil], nil);
 }
 
-- (void) testFetchObjectWithCoercion
+- (void)testFetchObjectWithCoercion
 {
     TestEntityClass * objectA = [NSEntityDescription insertNewObjectForEntityForName:@"TestEntityWithClass" inManagedObjectContext:moc];
     objectA.testAttribute = @"1234";
@@ -62,7 +62,7 @@
     XCTAssertEqualObjects([TestEntityClass kvc_fetchObjectInContext:moc withValue:@1234 forKey:@"testAttribute" options:nil], objectA);
 }
 
-- (void) testCreateOrFetchObject
+- (void)testCreateOrFetchObject
 {
     XCTAssertEqualObjects([TestEntityClass kvc_fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:nil], nil);
     TestEntityClass * objectA = [TestEntityClass kvc_fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:@{KVCCreateObjectOption:@YES}];
@@ -72,7 +72,7 @@
     XCTAssertEqualObjects([TestEntityClass kvc_fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:nil], objectA);
 }
 
-- (void) testFetchObjectWithCache
+- (void)testFetchObjectWithCache
 {
     TestEntityClass * objectA = [NSEntityDescription insertNewObjectForEntityForName:@"TestEntityWithClass" inManagedObjectContext:moc];
     objectA.testAttribute = @"A";
@@ -87,7 +87,7 @@
     XCTAssertEqualObjects([TestEntityClass kvc_fetchObjectInContext:moc withValue:@"A" forKey:@"testAttribute" options:(@{KVCCreateObjectOption:@YES, KVCEntitiesCacheOption:cache})], objectA);
 }
 
-- (void) testCreateObjectWithCacheMiss
+- (void)testCreateObjectWithCacheMiss
 {
     KVCEntitiesCache * cache = [[KVCEntitiesCache alloc] initWithInstanceCaches:
                                 @[[[KVCInstancesCache alloc] initWithContext:moc

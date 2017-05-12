@@ -16,9 +16,9 @@
 // Maps arbitrary keys to entityMapping
 @interface KVCModelMapping : NSObject
 @property NSDictionary * entityMappings;
-- (KVCEntityMapping*) entityMappingForKey:(id)key;
-- (KVCEntityMapping*) entityMappingForEntityName:(NSString*)entityName;
-- (NSArray*) keysForEntityName:(NSString*)entityName;
+- (KVCEntityMapping*)entityMappingForKey:(id)key;
+- (KVCEntityMapping*)entityMappingForEntityName:(NSString*)entityName;
+- (NSArray*)keysForEntityName:(NSString*)entityName;
 @end
 
 #pragma mark - KVCEntityMapping
@@ -38,7 +38,7 @@
 - (NSArray*)mappingsForKey:(id)key;
 
 // All keys in mapping
-- (NSArray*) allKeys;
+- (NSArray*)allKeys;
 
 // The Primary Key of the Entity
 // Used in fetch-or-create situation (see kvc_fetchObjectInContext, kvc_importObjects: and KVCEntitiesCache)

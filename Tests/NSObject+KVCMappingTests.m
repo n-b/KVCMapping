@@ -35,9 +35,9 @@
 
 @implementation NSObject_KVCMapping_Tests
 
-- (void) testBasic
+- (void)testBasic
 {
-    TestClass * test = [TestClass new];
+    TestClass * test = TestClass.new;
 
     [test kvc_setValue:@"testValue" forKey:@"usedProperty" withMappingDictionary:@{@"usedProperty": @"actualProperty1"} options:nil ];
 
@@ -45,9 +45,9 @@
     XCTAssertEqualObjects([test valueForKey:@"actualProperty1"], @"testValue");
 }
 
-- (void) testMultipleKey
+- (void)testMultipleKey
 {
-    TestClass * test = [TestClass new];
+    TestClass * test = TestClass.new;
     
     [test kvc_setValues:@{@"usedProperty1" : @"testValue1", @"usedProperty2" : @"testValue2"}
  withMappingDictionary:@{@"usedProperty1": @"actualProperty1", @"usedProperty2": @"actualProperty2"}
@@ -57,9 +57,9 @@
     XCTAssertEqualObjects([test valueForKey:@"actualProperty2"], @"testValue2");
 }
 
-- (void) testValuesFromArray
+- (void)testValuesFromArray
 {
-    TestClass * test = [TestClass new];
+    TestClass * test = TestClass.new;
     
     [test kvc_setValues:@[@"testValue1", @"testValue2"]
  withMappingDictionary:@{@0: @"actualProperty1", @1: @"actualProperty2"}
@@ -69,9 +69,9 @@
     XCTAssertEqualObjects([test valueForKey:@"actualProperty2"], @"testValue2");
 }
 
-- (void) testCompositeValue
+- (void)testCompositeValue
 {
-    TestClass * test = [TestClass new];
+    TestClass * test = TestClass.new;
 
     [test kvc_setValue:@"testValue" forKey:@"usedProperty" withMappingDictionary:@{@"usedProperty": @[@"actualProperty1",@"actualProperty2"]} options:nil];
 
@@ -79,21 +79,21 @@
     XCTAssertEqualObjects([test valueForKey:@"actualProperty2"], @"testValue");
 }
 
-- (void) testKVCSimpleValueTransformer
+- (void)testKVCSimpleValueTransformer
 {
-    [NSValueTransformer setValueTransformer:[UppercaseTransformer new] forName:@"uppercase"];
-    TestClass * test = [TestClass new];
+    NSValueTransformer setValueTransformer:[UppercaseTransformer.new forName:@"uppercase"];
+    TestClass * test = TestClass.new;
 
     [test kvc_setValue:@"testValue" forKey:@"usedProperty" withMappingDictionary:@{@"usedProperty": @"uppercase:actualProperty1"} options:nil];
 
     XCTAssertEqualObjects([test valueForKey:@"actualProperty1"], @"TESTVALUE");
 }
 
-- (void) testCompositeValueTransformer
+- (void)testCompositeValueTransformer
 {
-    [NSValueTransformer setValueTransformer:[UppercaseTransformer new] forName:@"uppercase"];
-    [NSValueTransformer setValueTransformer:[LowercaseTransformer new] forName:@"lowercase"];
-    TestClass * test = [TestClass new];
+    NSValueTransformer setValueTransformer:[UppercaseTransformer.new forName:@"uppercase"];
+    NSValueTransformer setValueTransformer:[LowercaseTransformer.new forName:@"lowercase"];
+    TestClass * test = TestClass.new;
     
     [test kvc_setValue:@"testValue" forKey:@"usedProperty" withMappingDictionary:
      @{@"usedProperty": @[@"uppercase:actualProperty1",
@@ -133,9 +133,9 @@
 
 @implementation NSObject_KVCReverseMapping_Tests
 
-- (void) testBasic
+- (void)testBasic
 {
-    TestClass * test = [TestClass new];
+    TestClass * test = TestClass.new;
     test.actualProperty1 = @"testValue1";
 
     id value = [test kvc_valueForKey:@"usedProperty" withMappingDictionary:@{@"usedProperty": @"actualProperty1"} options:nil];
@@ -143,9 +143,9 @@
     XCTAssertEqualObjects(value, @"testValue1");
 }
 
-- (void) testMultipleKey
+- (void)testMultipleKey
 {
-    TestClass * test = [TestClass new];
+    TestClass * test = TestClass.new;
     test.actualProperty1 = @"testValue1";
     test.actualProperty2 = @"testValue2";
     
@@ -156,9 +156,9 @@
     XCTAssertEqualObjects(values[@"usedProperty2"], @"testValue2");
 }
 
-- (void) testNilValues
+- (void)testNilValues
 {
-    TestClass * test = [TestClass new];
+    TestClass * test = TestClass.new;
     test.actualProperty1 = nil;
     
     id values = [test kvc_valuesWithMappingDictionary:@{@"usedProperty1": @"actualProperty1"}
@@ -167,9 +167,9 @@
     XCTAssertEqualObjects(values[@"usedProperty1"], [NSNull null]);
 }
 
-- (void) testValuesFromArray
+- (void)testValuesFromArray
 {
-    TestClass * test = [TestClass new];
+    TestClass * test = TestClass.new;
     test.actualProperty1 = @"testValue1";
     test.actualProperty2 = @"testValue2";
 
@@ -180,9 +180,9 @@
     XCTAssertEqualObjects(values[1], @"testValue2");
 }
 
-- (void) testCompositeValue
+- (void)testCompositeValue
 {
-    TestClass * test = [TestClass new];
+    TestClass * test = TestClass.new;
     test.actualProperty1 = @"testValue1";
     test.actualProperty2 = @"testValue2";
 
@@ -191,10 +191,10 @@
     XCTAssertEqualObjects(value, @"testValue1");
 }
 
-- (void) testUnsupportedValueTransformer
+- (void)testUnsupportedValueTransformer
 {
-    [NSValueTransformer setValueTransformer:[UppercaseTransformer new] forName:@"uppercase"];
-    TestClass * test = [TestClass new];
+    NSValueTransformer setValueTransformer:[UppercaseTransformer.new forName:@"uppercase"];
+    TestClass * test = TestClass.new;
     test.actualProperty1 = @"testValue1";
     
     id value = [test kvc_valueForKey:@"usedProperty" withMappingDictionary:@{@"usedProperty": @"uppercase:actualProperty1"} options:nil];
@@ -202,10 +202,10 @@
     XCTAssertNil(value);
 }
 
-- (void) testSupportedValueTransformer
+- (void)testSupportedValueTransformer
 {
-    [NSValueTransformer setValueTransformer:[OppositeNumberTransformer new] forName:@"opposite"];
-    TestClass * test = [TestClass new];
+    NSValueTransformer setValueTransformer:[OppositeNumberTransformer.new forName:@"opposite"];
+    TestClass * test = TestClass.new;
     test.actualProperty1 = @123;
     
     id value = [test kvc_valueForKey:@"usedProperty" withMappingDictionary:@{@"usedProperty": @"opposite:actualProperty1"} options:nil];
@@ -213,10 +213,10 @@
     XCTAssertEqualObjects(value, @(-123));
 }
 
-- (void) testSupportedValueTransformerWithNilValue
+- (void)testSupportedValueTransformerWithNilValue
 {
-    [NSValueTransformer setValueTransformer:[OppositeNumberTransformer new] forName:@"opposite"];
-    TestClass * test = [TestClass new];
+    NSValueTransformer setValueTransformer:[OppositeNumberTransformer.new forName:@"opposite"];
+    TestClass * test = TestClass.new;
     test.actualProperty1 = nil;
     
     id value = [test kvc_valueForKey:@"usedProperty" withMappingDictionary:@{@"usedProperty": @"opposite:actualProperty1"} options:nil];

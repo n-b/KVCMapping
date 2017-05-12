@@ -17,7 +17,7 @@
 #pragma mark -
 
 @implementation KVCKeyMapping (KVCAssignValue)
-- (void) assignValue:(id)value toObject:(id)object options:(NSDictionary*)options {
+- (void)assignValue:(id)value toObject:(id)object options:(NSDictionary*)options {
     [self doesNotRecognizeSelector:_cmd];
 }
 - (id) valueFromObject:(id)object options:(NSDictionary*)options {
@@ -29,7 +29,7 @@
 #pragma mark -
 
 @implementation KVCPropertyMapping (KVCAssignValue)
-- (void) assignValue:(id)value toObject:(id)object options:(NSDictionary*)options
+- (void)assignValue:(id)value toObject:(id)object options:(NSDictionary*)options
 {
     if(self.transformer) {
         value = [self.transformer transformedValue:value];
@@ -74,7 +74,7 @@
 #pragma mark -
 
 @implementation KVCRelationshipMapping (KVCAssignValue)
-- (void) assignValue:(id)value toObject:(id)object options:(NSDictionary*)options
+- (void)assignValue:(id)value toObject:(id)object options:(NSDictionary*)options
 {
     NSRelationshipDescription * relationshipDesc = [[object entity] relationshipsByName][self.relationship];
     if(!relationshipDesc.isToMany) {
@@ -107,7 +107,7 @@
 #pragma mark -
 
 @implementation KVCSubobjectMapping (KVCAssignValue)
-- (void) assignValue:(id)value toObject:(id)object options:(NSDictionary*)options
+- (void)assignValue:(id)value toObject:(id)object options:(NSDictionary*)options
 {
     NSRelationshipDescription * relationshipDesc = [[object entity] relationshipsByName][self.relationship];
     if(!relationshipDesc.isToMany) {
@@ -128,7 +128,7 @@
     if(!relationshipDesc.isToMany) {
         value = [[object valueForKey:self.relationship] kvc_valuesWithEntityMapping:self.mapping options:options];
     } else {
-        NSMutableArray * result = [NSMutableArray new];
+        NSMutableArray * result = NSMutableArray.new;
         for (id subobject in [object valueForKey:self.relationship]) {
             [result addObject:[subobject kvc_valuesWithEntityMapping:self.mapping options:options]];
         }

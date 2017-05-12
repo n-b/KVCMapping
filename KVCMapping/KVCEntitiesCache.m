@@ -18,7 +18,7 @@
 - (id) initWithInstanceCaches:(NSArray*)instanceCaches_
 {
     self = [super init];
-    NSMutableDictionary * dict = [NSMutableDictionary new];
+    NSMutableDictionary * dict = NSMutableDictionary.new;
     for (KVCInstancesCache * instanceCache in instanceCaches_) {
         dict[instanceCache.entityDescription.name] = instanceCache;
     }
@@ -26,17 +26,17 @@
     return self;
 }
 
-- (KVCInstancesCache*) instancesCacheForEntity:(NSEntityDescription*)entity
+- (KVCInstancesCache*)instancesCacheForEntity:(NSEntityDescription*)entity
 {
     return self[entity.name];
 }
 
-- (NSSet*) accessedInstances
+- (NSSet*)accessedInstances
 {
     return [[NSSet setWithArray:[_entitiesCache allValues]] valueForKeyPath:@"@distinctUnionOfSets.accessedInstances"];
 }
 
-- (NSSet*) unaccessedInstances
+- (NSSet*)unaccessedInstances
 {
     return [[NSSet setWithArray:[_entitiesCache allValues]] valueForKeyPath:@"@distinctUnionOfSets.unaccessedInstances"];
 }
@@ -55,19 +55,19 @@
 {
     self = [super init];
     NSEntityDescription * entityDescription = [NSEntityDescription entityForName:entityName inManagedObjectContext:moc];
-    NSFetchRequest * frequest = [NSFetchRequest new];
+    NSFetchRequest * frequest = NSFetchRequest.new;
     frequest.entity = entityDescription;
     frequest.returnsObjectsAsFaults = NO; // Actually load everything.
     NSError * error;
     NSArray * objects = [moc executeFetchRequest:frequest error:&error];
     NSAssert(error==nil, @"fetch should not fail %@ %@", frequest, error);
-    NSMutableDictionary * instances = [NSMutableDictionary new];
+    NSMutableDictionary * instances = NSMutableDictionary.new;
     for (id object in objects) {
         instances[[object valueForKey:primaryKey]] = object;
     }
     _instances = instances;
     _entityDescription = entityDescription;
-    _accessedInstances = [NSMutableSet new];
+    _accessedInstances = NSMutableSet.new;
     return self;
 }
 
@@ -86,18 +86,18 @@
     return instance;
 }
 
-- (void) setInstance:(id)instance forKey:(id<NSCopying>)key
+- (void)setInstance:(id)instance forKey:(id<NSCopying>)key
 {
     [_accessedInstances addObject:instance];
     _instances[key] = instance;
 }
 
-- (NSSet*) accessedInstances
+- (NSSet*)accessedInstances
 {
     return [NSSet setWithSet:_accessedInstances];
 }
 
-- (NSSet*) unaccessedInstances
+- (NSSet*)unaccessedInstances
 {
     if([_accessedInstances count] == [_instances count]) {
         return [NSSet set];
@@ -116,7 +116,7 @@
 @implementation KVCEntitiesCache (ModelMapping)
 - (id) initWithObjectKeys:(NSArray*)keys inModelMapping:(KVCModelMapping*)modelMapping inContext:(NSManagedObjectContext*)moc
 {
-    NSMutableArray * instanceCaches = [NSMutableArray new];
+    NSMutableArray * instanceCaches = NSMutableArray.new;
     for (NSString * key in keys) {
         KVCEntityMapping * entityMapping = [modelMapping entityMappingForKey:key];
         if(entityMapping) {
